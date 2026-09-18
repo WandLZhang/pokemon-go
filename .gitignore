@@ -1,0 +1,12 @@
+.venv/
+__pycache__/
+*.pyc
+
+# 19 MB and it changes every event. fetch.sh pulls it, the stamp pins it.
+data/gamemaster.json
+
+# Screenshots carry a trainer name and friend code. Derived data only.
+screenshots/
+*.png
+*.jpg
+*.jpeg
