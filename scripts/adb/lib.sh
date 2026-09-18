@@ -42,8 +42,12 @@ screen_size() {
     | tail -1
 }
 
+# Capture first, then match. `grep -q` exits on the first hit and kills adb with
+# SIGPIPE, and pipefail turns that 141 into a false "screen is off".
 screen_is_on() {
-  adb_ shell dumpsys power | grep -qE 'mWakefulness=Awake|mScreenOn=true'
+  local power
+  power="$(adb_ shell dumpsys power)"
+  grep -qE 'mWakefulness=Awake|mScreenOn=true' <<<"$power"
 }
 
 # macOS ships shasum, most Linux ships sha256sum. Take whichever is there.

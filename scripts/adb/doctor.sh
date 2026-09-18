@@ -17,12 +17,19 @@ else
   echo "screen state OFF. Wake and unlock the phone, or every capture is black."
 fi
 
+# Android 16+ renamed mResumedActivity to topResumedActivity/ResumedActivity,
+# so match any of them or this reads "unknown" on a current phone.
 FOREGROUND="$(adb_ shell dumpsys activity activities \
-  | sed -n 's/.*mResumedActivity.*{[^ ]* [^ ]* \([^ /]*\)\/.*/\1/p' | head -1)"
+  | sed -n 's/.*[Rr]esumedActivity[:=].*{[^ ]* [^ ]* \([^ /]*\)\/.*/\1/p' | head -1)"
 echo "foreground   ${FOREGROUND:-unknown}"
 
+# Snapshot the list once. Piping adb straight into `grep -q` makes grep exit on
+# the first match, which kills adb with SIGPIPE, and lib.sh sets pipefail, so
+# the 141 was being read as "not installed" for apps that are installed.
+PACKAGES="$(adb_ shell pm list packages | tr -d '\r')"
+
 for PKG in com.nianticlabs.pokemongo tesmath.calcy; do
-  if adb_ shell pm list packages | tr -d '\r' | grep -qx "package:$PKG"; then
+  if grep -qx "package:$PKG" <<<"$PACKAGES"; then
     echo "installed    $PKG"
   else
     echo "MISSING      $PKG"
