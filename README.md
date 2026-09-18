@@ -74,7 +74,17 @@ reward list is in [reference.md](reference.md#trainer-level-40).
 
 ## Roster
 
-Waiting on `data/box.csv`, the Calcy IV export.
+311 Pokemon transcribed into `data/box_list.csv`. Run `python rank.py box`.
+
+Transferring never removes a Pokedex entry. A species stays registered once
+caught, so keeping one of every species is a collection preference. `box`
+treats it that way and only keeps one of each when you pass `--collection`.
+
+The game refuses to transfer a favorite, so those land in their own bucket
+and need unfavoriting first.
+
+Still waiting on `data/box.csv`, the Calcy IV export, for the IV tiebreak
+among the keepers and for anything PvP.
 
 Calcy reads one Pokemon at a time, so scanning a whole box costs an evening.
 `python rank.py keepers` cuts it down. It ranks every species by its best
@@ -110,6 +120,7 @@ python rank.py selftest         # 39 checks against published values
 python rank.py constants        # every constant the ranking uses
 python rank.py counters ZAMAZENTA --tier 5 --top 15
 python rank.py counters ZAMAZENTA --box data/box.csv --level-cap 49
+python rank.py box                    # keep or transfer, per Pokemon
 python rank.py keepers --per-type 8   # which Pokemon are worth scanning
 python rank.py evolve                 # what your evolution items can buy
 python rank.py powerup --from 30 --to 40

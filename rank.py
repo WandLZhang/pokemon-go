@@ -18,7 +18,7 @@ import logging
 import sys
 from pathlib import Path
 
-from pogo import battle, box
+from pogo import battle, box, roster
 from pogo.gamemaster import GameMaster
 
 DEFAULT_LEVEL = 40.0
@@ -242,6 +242,46 @@ def cmd_evolve(gm, args):
     return 0
 
 
+def cmd_box(gm, args):
+    """Keep or transfer, for every Pokemon in the transcribed box list."""
+    holdings = roster.evaluate(gm, roster.load_list(gm, args.list),
+                               keep_rank=args.keep_rank,
+                               keep_one_of_each=args.collection)
+    order = {"KEEP": 0, "EVOLVE": 1, "LOCKED": 2, "COLLECTION": 3,
+             "TRANSFER": 4, "RECHECK": 5}
+    counts = {}
+    for h in holdings:
+        counts[h.verdict] = counts.get(h.verdict, 0) + 1
+
+    print(f"{len(holdings)} Pokemon, "
+          f"{len({h.species.pokemon_id for h in holdings})} species\n")
+    for verdict in sorted(counts, key=lambda v: order[v]):
+        print(f"  {verdict:<9} {counts[verdict]:>4}")
+
+    for verdict in ("RECHECK", "KEEP", "EVOLVE"):
+        rows = [h for h in holdings if h.verdict == verdict]
+        rows.sort(key=lambda h: (h.type_rank or 9999, -h.cp))
+        print(f"\n== {verdict} ({len(rows)}) ==")
+        for h in rows[:args.top]:
+            flags = f" [{','.join(sorted(h.flags))}]" if h.flags else ""
+            print(f"  {h.species_name:<18} {h.cp:>5} CP  {h.reason}{flags}")
+        if len(rows) > args.top:
+            print(f"  ... {len(rows) - args.top} more")
+
+    transfers = [h for h in holdings if h.verdict == "TRANSFER"]
+    if transfers:
+        print(f"\n== TRANSFER ({len(transfers)}) ==")
+        by_species = {}
+        for h in transfers:
+            by_species.setdefault(h.species_name, []).append(h.cp)
+        for name in sorted(by_species):
+            cps = ", ".join(str(c) for c in sorted(by_species[name], reverse=True))
+            print(f"  {name:<18} {cps}")
+        print(f"\n  Frees {len(transfers)} slots and pays "
+              f"{len(transfers)} candy plus stardust.")
+    return 0
+
+
 def cmd_powerup(gm, args):
     try:
         cost = battle.powerup_cost(gm, args.start, args.end)
@@ -289,6 +329,14 @@ def main(argv=None):
     evolve.add_argument("--bag", default="data/bag.json")
     evolve.add_argument("--top", type=int, default=8)
 
+    boxcmd = sub.add_parser("box", help="keep or transfer, per Pokemon")
+    boxcmd.add_argument("--list", default="data/box_list.csv")
+    boxcmd.add_argument("--keep-rank", type=int, default=30,
+                        help="how deep in its type a species must place")
+    boxcmd.add_argument("--top", type=int, default=40)
+    boxcmd.add_argument("--collection", action="store_true",
+                        help="keep one of every species. Off by default, since\ntransferring never costs the Pokedex entry")
+
     powerup = sub.add_parser("powerup", help="stardust and candy for a climb")
     powerup.add_argument("--from", dest="start", type=float, required=True)
     powerup.add_argument("--to", dest="end", type=float, required=True)
@@ -304,6 +352,7 @@ def main(argv=None):
         "counters": cmd_counters,
         "keepers": cmd_keepers,
         "evolve": cmd_evolve,
+        "box": cmd_box,
         "powerup": cmd_powerup,
     }[args.command](gm, args)
 
