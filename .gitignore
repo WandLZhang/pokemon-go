@@ -10,3 +10,6 @@ screenshots/
 *.png
 *.jpg
 *.jpeg
+
+# Phone captures carry a trainer name and friend code.
+capture/
