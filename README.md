@@ -8,51 +8,74 @@ Game mechanics: [reference.md](reference.md). Ranking engine: [rank.py](rank.py)
 
 ## Do this now
 
-1. **Drop Poke Ball 236 to 50.** Frees 186 slots.
-2. **Drop all 11 Hyper Potions.** Max Potion does the same job and you hold 52.
-3. **Fight Giovanni.** Your Super Rocket Radar is unused. It came from GO Pass:
-   Flying Taxi, which expired on July 1, so there's no way to get another one.
-   He closes with **Shadow Reshiram**, and Reshiram already ranks near the top
-   of the Fire attackers this engine scores. Shadow adds 1.2x attack on top.
-4. **Beat one Rocket grunt.** You hold 3 Shadow Shards and 4 refine into a
-   Purified Gem. One grunt drops one shard.
+1. **Spend all 5 Sinnoh Stones.** Fourteen Pokemon in the box want one. These
+   five pay best, and two of them are shiny:
 
-Steps 1 and 2 free 197 slots and take the bag to 374 of 550.
+   | Evolve | CP | Becomes | Rank | Candy |
+   |---|---|---|---|---|
+   | Piloswine (shiny) | 816 | Mamoswine | #3 Ground | 100 |
+   | Roselia (favorite) | 1553 | Roserade | #4 Grass | 100 |
+   | Togetic | 955 | Togekiss | #7 Fairy | 100 |
+   | Murkrow (shiny) | 1315 | Honchkrow | #7 Flying | 100 |
+   | Electabuzz | 1812 | Electivire | #8 Electric | 100 |
+
+   Evolve Togetic, not Togepi. Same end form, 25 less candy. Evolve the 1315
+   CP Murkrow even though a Honchkrow is already in the box, because that one
+   is 567 CP. Transfer the small one afterward.
+
+2. **Transfer 137 Pokemon.** `python rank.py box` names them. That frees 137
+   slots and pays 137 candy plus stardust.
+
+3. **Drop Poke Ball 236 to 50, and all 11 Hyper Potions.** Frees 197 and takes
+   the bag to 374 of 550. You hold 82 Ultra Balls and 41 Great Balls, so the
+   Poke Balls do nothing at level 39.
+
+4. **Fight Giovanni.** Your Super Rocket Radar is unused. It came from GO
+   Pass: Flying Taxi, which expired on July 1, so there's no way to get
+   another one. He closes with **Shadow Reshiram**, and Shadow adds 1.2x
+   attack.
+
+5. **Beat one Rocket grunt.** You hold 3 Shadow Shards and 4 refine into a
+   Purified Gem. One grunt drops one shard.
 
 Giovanni's lineup: Shadow Persian, then one of Shadow Rhyperior, Shadow
 Machamp or Shadow Kangaskhan, then Shadow Reshiram. Bring Fighting for the
 first and third slots, Psychic for Machamp, and Ground or Rock for Reshiram.
+Your Rhyperior is the Reshiram answer.
 
 ## Bag, 571 of 550
 
-You can't receive items until you're under 550.
+You can't receive items until you're under 550. Counts live in
+`data/bag.json`, and they reconcile to 571.
 
 | Item | Count | Call |
 |---|---|---|
-| Poke Ball | 236 | **Drop to 50.** Worst ball you own, and stops refill it |
+| Poke Ball | 236 | **Drop to 50.** You have 82 Ultra and 41 Great |
+| Ultra Ball | 82 | Keep. This is your catching stock |
 | Max Potion | 52 | Keep. Raid currency |
 | Great Ball | 41 | Keep |
-| Gift | 21 | Free. Gifts sit outside the bag |
+| Pinap Berry | 39 | Keep. Doubles catch candy |
+| Razz Berry | 38 | Keep |
+| Premium Battle Pass | 14 | **14 raid entries.** Spend them on the Fire and Ground bosses you're short of |
+| Nanab Berry | 13 | Drop if you need more room. It calms, it doesn't help you catch |
 | Hyper Potion | 11 | **Drop all.** Max Potion replaces it |
 | Rare Candy | 6 | Hold for a legendary you're short on |
-| Sinnoh Stone | 5 | Keep |
+| Sinnoh Stone | 5 | **Spend all 5.** See above |
+| Lure Module | 5 | Keep |
+| Metal Coat | 3 | Only Scyther wants one. **Two are dead weight** |
+| Unova Stone | 3 | Only Minccino wants one. **Two are dead weight** |
 | Incense | 3 | Keep |
-| Metal Coat | 3 | Keep |
-| Unova Stone | 3 | Keep |
 | Shadow Shard | 3 | **Beat one grunt** for the fourth |
 | Charged TM | 2 | Hold for a raid attacker with a bad charged move |
-| Sun Stone | 2 | Keep |
+| Sun Stone | 2 | Petilil and Helioptile. Neither is a raid attacker |
+| Dragon Scale | 1 | Your shiny Horsea, 125 candy |
+| Upgrade | 1 | No Porygon in the box. Dead until you catch one |
 | Revive | 1 | **Spin gyms before you raid.** Level 40 pays 20 Max Revives |
-| Dragon Scale | 1 | Keep |
-| Upgrade | 1 | Keep |
 | Star Piece | 1 | Save for a Community Day |
-| Poffin | 1 | Keep |
-| Rocket Radar | 1 | Assembled |
-| Super Rocket Radar | 1 | **Use it.** See step 3 |
+| Super Rocket Radar | 1 | **Use it.** See step 4 |
+| Rocket Radar, Poffin, Egg Incubator, Raid Pass, 3 special Lures, Daily Adventure Incense | 1 each | Keep |
 
-Those rows total 374 items. The bag reads 571, and gifts don't count against
-it, so **197 items aren't in the screenshots**. Berries, Ultra Balls, passes
-and lures are all missing. Send the rest of the scroll and I'll finish this.
+Gifts and stickers sit outside the bag and don't count toward the 550.
 
 ## Trainer
 
