@@ -1,0 +1,41 @@
+{
+  "observed": "2026-09-18, from screenshots",
+  "complete": false,
+  "capacity": 550,
+  "reported_total": 571,
+  "counted_here": 374,
+  "missing_from_screenshots": 197,
+  "note": "The scroll stopped after Great Ball. Berries, Ultra Balls, passes and lures are all unseen. Gifts and stickers sit outside the bag and aren't in counted_here.",
+  "items": {
+    "Poke Ball": {"count": 236},
+    "Max Potion": {"count": 52},
+    "Great Ball": {"count": 41},
+    "Hyper Potion": {"count": 11},
+    "Rare Candy": {"count": 6, "item_id": "ITEM_RARE_CANDY"},
+    "Sinnoh Stone": {"count": 5, "item_id": "ITEM_GEN4_EVOLUTION_STONE"},
+    "Incense": {"count": 3},
+    "Metal Coat": {"count": 3, "item_id": "ITEM_METAL_COAT"},
+    "Unova Stone": {"count": 3, "item_id": "ITEM_GEN5_EVOLUTION_STONE"},
+    "Shadow Shard": {"count": 3, "item_id": "ITEM_SHADOW_GEM_FRAGMENT"},
+    "Charged TM": {"count": 2, "item_id": "ITEM_MOVE_REROLL_SPECIAL_ATTACK"},
+    "Sun Stone": {"count": 2, "item_id": "ITEM_SUN_STONE"},
+    "Revive": {"count": 1},
+    "Dragon Scale": {"count": 1, "item_id": "ITEM_DRAGON_SCALE"},
+    "Upgrade": {"count": 1, "item_id": "ITEM_UP_GRADE"},
+    "Star Piece": {"count": 1, "item_id": "ITEM_STAR_PIECE"},
+    "Poffin": {"count": 1},
+    "Rocket Radar": {"count": 1},
+    "Super Rocket Radar": {"count": 1}
+  },
+  "outside_the_bag": {
+    "Gift": 21,
+    "Stickers": null,
+    "Scrapbook": null,
+    "Camera": null,
+    "Explorer Gadget": null,
+    "Infinite Incubator": 1,
+    "Egg Incubator": null,
+    "Raid Pass": null,
+    "Premium Battle Pass": null
+  }
+}

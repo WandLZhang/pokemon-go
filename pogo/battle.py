@@ -115,6 +115,22 @@ def damage(gm, power, attacker, defender, move_type):
     return int(math.floor(raw)) + 1
 
 
+@dataclass
+class _NeutralSpecies:
+    name: str = "neutral target"
+    types: tuple = ()
+
+
+def neutral_target(defense=180.0, hp=15000):
+    """A defender every type hits for 1.0x.
+
+    Ranking attackers by type needs a target that doesn't resist or invite
+    anything. An empty type tuple gives effectiveness 1.0 for every move,
+    so the ordering reflects the attacker's own moves and stats.
+    """
+    return Combatant(_NeutralSpecies(), 0.0, defense, hp)
+
+
 def movesets(gm, species):
     """Every legal fast and charged pair, elite moves included."""
     for fast_id in species.all_fast():

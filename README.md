@@ -74,9 +74,32 @@ reward list is in [reference.md](reference.md#trainer-level-40).
 
 ## Roster
 
-Waiting on `data/box.csv`, the Calcy IV export. Appraisal-scan first. Calcy
-writes an IV range for anything you never appraised, and the loader flags
-those rows rather than ranking them.
+Waiting on `data/box.csv`, the Calcy IV export.
+
+Calcy reads one Pokemon at a time, so scanning a whole box costs an evening.
+`python rank.py keepers` cuts it down. It ranks every species by its best
+charged move per type against a neutral target, then prints the names as
+Pokemon GO search strings. Paste a batch into the in-game search bar, scan
+what matches in Calcy, and transfer the rest. At `--per-type 8` that's 77
+names instead of the full box. A name you don't own matches nothing, so the
+search filters itself.
+
+Appraisal-scan before exporting. Calcy writes an IV range for anything you
+never appraised, and the loader flags those rows rather than ranking them.
+
+### Getting the CSV off the phone
+
+There's no route from this workstation to an Android device, and `adb` needs
+one. Calcy's export goes through the Android share sheet, so send it either
+way:
+
+1. Attach the CSV in chat. It lands on disk here, the same as a screenshot.
+2. Share it to Google Drive, then share that file with
+   `admin@williszhang.altostrat.com`. The gcloud token on this box carries the
+   `drive` scope, so it can pull the file directly.
+
+Calcy writes the CSV from its **History** screen, in the three-dot menu, not
+from the renaming settings.
 
 ## Running it
 
@@ -87,8 +110,13 @@ python rank.py selftest         # 39 checks against published values
 python rank.py constants        # every constant the ranking uses
 python rank.py counters ZAMAZENTA --tier 5 --top 15
 python rank.py counters ZAMAZENTA --box data/box.csv --level-cap 49
+python rank.py keepers --per-type 8   # which Pokemon are worth scanning
+python rank.py evolve                 # what your evolution items can buy
 python rank.py powerup --from 30 --to 40
 ```
+
+`data/bag.json` holds the item counts read off the screenshots. `evolve`
+reads it, so correcting a count there corrects the advice.
 
 `counters` ranks every species at level 40 with perfect IVs, including forms
 you can't obtain. Pass `--box` to rank what you own.

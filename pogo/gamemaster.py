@@ -72,6 +72,8 @@ class Species:
     elite_fast: list = field(default_factory=list)
     elite_charged: list = field(default_factory=list)
     shadow_available: bool = False
+    # (evolves_into, item_id or None, candy_cost)
+    evolutions: list = field(default_factory=list)
 
     @property
     def name(self):
@@ -163,6 +165,13 @@ class GameMaster:
                 elite_fast=settings.get("eliteQuickMove", []),
                 elite_charged=settings.get("eliteCinematicMove", []),
                 shadow_available="shadow" in settings,
+                evolutions=[
+                    (branch.get("evolution"),
+                     branch.get("evolutionItemRequirement"),
+                     branch.get("candyCost"))
+                    for branch in settings.get("evolutionBranch", []) or []
+                    if branch.get("evolution")
+                ],
             )
         return out
 
