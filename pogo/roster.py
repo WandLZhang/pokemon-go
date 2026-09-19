@@ -31,6 +31,12 @@ DEX_IS_PERMANENT = True
 RARE_CLASSES = ("POKEMON_CLASS_LEGENDARY", "POKEMON_CLASS_MYTHIC",
                 "POKEMON_CLASS_ULTRA_BEAST")
 
+# How much a holding that still needs candy is discounted against one that is
+# already the final form, when the two compete for the same slot. Without it
+# a 625 Bulbasaur projecting 1524 outranks a Venusaur 1435 you already own,
+# and the tool tells you to transfer the ready attacker.
+UNEVOLVED_DISCOUNT = 0.8
+
 # Minimum CP in Pokemon GO. Anything below it is a transcription error.
 MIN_CP = 10
 
@@ -46,7 +52,7 @@ ITEM_NAMES = {
 }
 
 
-@dataclass
+@dataclass(eq=False)
 class Holding:
     species_name: str
     cp: int | None
@@ -123,7 +129,11 @@ def final_form(gm, species, seen=None):
         matches = gm.find(evolves_into)
         if not matches:
             continue
+        if matches[0].template_id == species.template_id:
+            continue
         deeper, deeper_candy, deeper_items = final_form(gm, matches[0], seen)
+        if deeper.template_id == species.template_id:
+            continue
         attacker = battle.build(gm, deeper, (15, 15, 15), 40)
         dps = battle.best_moveset(gm, attacker, target)[0]
         items = ((item_id,) if item_id else ()) + deeper_items
@@ -146,13 +156,26 @@ def evolved_cp(current_cp, from_species, to_species):
     if current_cp is None:
         return None
 
-    def product(species, iv):
-        return ((species.base_attack + iv)
-                * math.sqrt(species.base_defense + iv)
-                * math.sqrt(species.base_stamina + iv))
+    def ratio(ivs):
+        a, d, s = ivs
 
-    ratios = [product(to_species, iv) / product(from_species, iv) for iv in (0, 15)]
-    return (int(current_cp * min(ratios)), int(current_cp * max(ratios)))
+        def product(sp):
+            return ((sp.base_attack + a)
+                    * math.sqrt(sp.base_defense + d)
+                    * math.sqrt(sp.base_stamina + s))
+
+        return product(to_species) / product(from_species)
+
+    # Each factor is monotone in its own IV, and the direction follows the
+    # sign of the base-stat change. Sampling only the uniform corners misses
+    # the extremes whenever one stat rises and another falls.
+    low_iv = (15 if to_species.base_attack > from_species.base_attack else 0,
+              15 if to_species.base_defense > from_species.base_defense else 0,
+              15 if to_species.base_stamina > from_species.base_stamina else 0)
+    high_iv = tuple(15 - v for v in low_iv)
+    # The CP on screen is floored, so the true value runs up to cp + 1. On a
+    # ratio like Magikarp's 19.3 that single point is worth 19 CP.
+    return (int(current_cp * ratio(low_iv)), int((current_cp + 1) * ratio(high_iv)))
 
 
 def type_leaderboard(gm, level=40.0, same_type_only=True):
@@ -176,14 +199,15 @@ def type_leaderboard(gm, level=40.0, same_type_only=True):
             if dps > slot.get(species.template_id, 0.0):
                 slot[species.template_id] = dps
 
-    ranks = {}
+    ranks, best_by_type = {}, {}
     for move_type, scores in per_type.items():
-        for i, (template_id, dps) in enumerate(
-                sorted(scores.items(), key=lambda kv: -kv[1]), 1):
+        ordered = sorted(scores.items(), key=lambda kv: -kv[1])
+        best_by_type[move_type] = ordered[0][1] if ordered else 0.0
+        for i, (template_id, dps) in enumerate(ordered, 1):
             current = ranks.get(template_id)
             if current is None or i < current[0]:
                 ranks[template_id] = (i, move_type, dps)
-    return ranks
+    return ranks, best_by_type
 
 
 def evaluate(gm, holdings, keep_rank=30, keep_one_of_each=False,
@@ -196,7 +220,7 @@ def evaluate(gm, holdings, keep_rank=30, keep_one_of_each=False,
     keep_one_of_each is off by default. Transferring doesn't cost the
     Pokedex entry, so a living collection is a preference to opt into.
     """
-    ranks = type_leaderboard(gm)
+    ranks, _ = type_leaderboard(gm)
 
     for h in holdings:
         h.final, h.candy_to_final, h.items_to_final = final_form(gm, h.species)
@@ -213,14 +237,26 @@ def evaluate(gm, holdings, keep_rank=30, keep_one_of_each=False,
                 best_of_species[h.species.pokemon_id] = h
         collection = {id(h) for h in best_of_species.values()}
 
-    # Rank every copy of a species so only the best one earns the slot. A
-    # second Nihilego adds nothing to a raid party you bring one of.
-    by_species = {}
-    for h in sorted(holdings, key=lambda x: -(x.cp or 0)):
-        by_species.setdefault(h.species.pokemon_id, []).append(h)
+    # Group by the END form, not the current one. The rank a holding earns
+    # comes from h.final, so a Charmander and a Charizard compete for the
+    # same slot. Grouping by the pre-evolution gave both copy_index 0 and
+    # told you to spend 125 candy reaching a Charizard you already own.
+    #
+    # Rank inside a group by projected CP, since a Machop 704 makes a better
+    # Machamp than a Machoke 860 does.
+    def projected(h):
+        band = evolved_cp(h.cp, h.species, h.final)
+        value = band[0] if band else (h.cp or 0)
+        if h.final.template_id != h.species.template_id:
+            value *= UNEVOLVED_DISCOUNT
+        return value
+
+    by_final = {}
+    for h in sorted(holdings, key=lambda x: -projected(x)):
+        by_final.setdefault(h.final.pokemon_id, []).append(h)
 
     for h in holdings:
-        copies = by_species[h.species.pokemon_id]
+        copies = by_final[h.final.pokemon_id]
         h.copy_index = copies.index(h)
         ranked = bool(h.type_rank) and h.type_rank <= keep_rank
         evolving = h.final.template_id != h.species.template_id

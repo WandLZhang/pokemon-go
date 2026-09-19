@@ -329,7 +329,7 @@ def cmd_roster(gm, args):
     for h in holdings:
         h.final, h.candy_to_final, h.items_to_final = roster.final_form(gm, h.species)
     target = battle.neutral_target()
-    ranks = roster.type_leaderboard(gm, level=args.level)
+    ranks, best_by_type = roster.type_leaderboard(gm, level=args.level)
 
     per_type = {}
     for h in holdings:
@@ -362,12 +362,11 @@ def cmd_roster(gm, args):
             if len(team) == args.size:
                 break
 
-        world_best = max((e[2] for e in ranks.values()
-                          if e[1] == move_type), default=0.0)
+        world_best = best_by_type.get(move_type, 0.0)
         lead = team[0][0] if team else 0.0
         share = lead / world_best * 100 if world_best else 0
-        print(f"\n{move_type}   best {lead:.1f} DPS, {share:.0f}% of the "
-              f"strongest {move_type} attacker in the game")
+        print(f"\n{move_type}   best {lead:.1f} DPS, {share:.0f}% of the best "
+              f"same-type {move_type} attacker in the game")
         if share < args.gap:
             gaps.append((share, move_type))
         for i, (dps, h, charged_id) in enumerate(team, 1):
