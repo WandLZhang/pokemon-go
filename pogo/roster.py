@@ -7,6 +7,7 @@ later, once the keepers are scanned.
 """
 
 import csv
+import math
 from dataclasses import dataclass, field
 
 from . import battle
@@ -127,6 +128,26 @@ def final_form(gm, species, seen=None):
     return best[0], best[1], best[2]
 
 
+def evolved_cp(current_cp, from_species, to_species):
+    """Project CP after evolving. Returns (low, high) across the IV range.
+
+    Evolving keeps the level and the IVs, so the CP ratio is just the ratio
+    of the two stat products. IVs don't cancel out of that ratio, but they
+    move it by about a percent against base stats in the hundreds, so the
+    spread from IV 0 to IV 15 is the honest error bar.
+    """
+    if current_cp is None:
+        return None
+
+    def product(species, iv):
+        return ((species.base_attack + iv)
+                * math.sqrt(species.base_defense + iv)
+                * math.sqrt(species.base_stamina + iv))
+
+    ratios = [product(to_species, iv) / product(from_species, iv) for iv in (0, 15)]
+    return (int(current_cp * min(ratios)), int(current_cp * max(ratios)))
+
+
 def type_leaderboard(gm, level=40.0, same_type_only=True):
     """Best DPS per species per attacking type, and each species' rank.
 
@@ -205,7 +226,9 @@ def evaluate(gm, holdings, keep_rank=30, keep_one_of_each=False):
             cost = f"{h.candy_to_final} candy"
             if items:
                 cost += f" + {items}"
-            h.reason = f"{h.final.name} is #{h.type_rank} {h.move_type}, {cost}"
+            proj = evolved_cp(h.cp, h.species, h.final)
+            arrow = f" -> {proj[0]}-{proj[1]} CP" if proj else ""
+            h.reason = f"{h.final.name} #{h.type_rank} {h.move_type}{arrow}, {cost}"
         elif ranked and h.copy_index == 0:
             h.verdict = "KEEP"
             h.reason = f"#{h.type_rank} {h.move_type}, {h.dps:.1f} DPS"
