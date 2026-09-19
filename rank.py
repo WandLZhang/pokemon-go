@@ -247,9 +247,10 @@ def cmd_box(gm, args):
     holdings = roster.evaluate(gm, roster.load_list(gm, args.list),
                                keep_rank=args.keep_rank,
                                keep_one_of_each=args.collection,
-                               respect_favorites=not args.unfavorite)
-    order = {"KEEP": 0, "EVOLVE": 1, "HOLD": 2, "LOCKED": 3, "COLLECTION": 4,
-             "TRANSFER": 5, "RECHECK": 6}
+                               respect_favorites=not args.unfavorite,
+                               buddy=args.buddy)
+    order = {"KEEP": 0, "EVOLVE": 1, "HOLD": 2, "BUDDY": 3, "LOCKED": 4,
+             "COLLECTION": 5, "TRANSFER": 6, "RECHECK": 7}
     counts = {}
     for h in holdings:
         counts[h.verdict] = counts.get(h.verdict, 0) + 1
@@ -283,6 +284,67 @@ def cmd_box(gm, args):
             print(f"  {name:<18} {cps}")
         print(f"\n  Frees {len(transfers)} slots and pays "
               f"{len(transfers)} candy plus stardust.")
+    return 0
+
+
+def _search_batches(names, size):
+    """Pokemon GO search strings, comma separated. Comma means OR."""
+    ordered = sorted({n.split("_")[0].lower() for n in names})
+    return [",".join(ordered[i:i + size]) for i in range(0, len(ordered), size)]
+
+
+def cmd_plan(gm, args):
+    """The transfer pass as taps, not as a list to read.
+
+    Most species leave the box entirely, so those collapse into a search
+    string: paste it, select all, transfer. Only the species where some
+    copies stay need reading, and those print with CPs.
+    """
+    import collections
+
+    holdings = roster.evaluate(gm, roster.load_list(gm, args.list),
+                               keep_rank=args.keep_rank,
+                               respect_favorites=False,
+                               buddy=args.buddy)
+    owned = collections.Counter(h.species.pokemon_id for h in holdings)
+    going = collections.defaultdict(list)
+    for h in holdings:
+        if h.verdict == "TRANSFER":
+            going[h.species.pokemon_id].append(h)
+
+    sweep = {k: v for k, v in going.items() if len(v) == owned[k]}
+    pick = {k: v for k, v in going.items() if len(v) < owned[k]}
+    unfavorite = [h for h in holdings if h.verdict == "TRANSFER" and h.locked]
+    total = sum(len(v) for v in going.values())
+
+    print(f"TRANSFER {total}. Storage {args.storage} -> {args.storage - total}.\n")
+
+    if unfavorite:
+        print(f"1. Unfavorite these {len(unfavorite)} first. The game won't "
+              f"transfer a favorite.\n")
+        for batch in _search_batches([h.species_name for h in unfavorite], args.batch):
+            print(f"   {batch}")
+        print()
+
+    swept = sum(len(v) for v in sweep.values())
+    print(f"2. Paste each line into the Pokemon GO search bar, then select all "
+          f"and transfer.\n   {swept} Pokemon across {len(sweep)} species, none "
+          f"of which you keep a copy of.\n")
+    names = [v[0].species_name for v in sweep.values()]
+    for batch in _search_batches(names, args.batch):
+        print(f"   {batch}")
+
+    if pick:
+        picked = sum(len(v) for v in pick.values())
+        print(f"\n3. These {picked} need picking, because you keep another copy. "
+              f"Search the name and transfer the CP listed.\n")
+        for key in sorted(pick, key=lambda k: pick[k][0].species_name):
+            rows = pick[key]
+            keep = [h for h in holdings
+                    if h.species.pokemon_id == key and h.verdict != "TRANSFER"]
+            drop = ", ".join(str(h.cp) for h in sorted(rows, key=lambda x: -(x.cp or 0)))
+            held = ", ".join(str(h.cp) for h in sorted(keep, key=lambda x: -(x.cp or 0)))
+            print(f"   {rows[0].species_name:<14} transfer {drop:<16} keep {held}")
     return 0
 
 
@@ -340,8 +402,17 @@ def main(argv=None):
     boxcmd.add_argument("--top", type=int, default=40)
     boxcmd.add_argument("--unfavorite", action="store_true",
                         help="treat favorites as transferable")
+    boxcmd.add_argument("--buddy", default="PANCHAM")
     boxcmd.add_argument("--collection", action="store_true",
                         help="keep one of every species. Off by default, since\ntransferring never costs the Pokedex entry")
+
+    plan = sub.add_parser("plan", help="the transfer pass as paste-able searches")
+    plan.add_argument("--list", default="data/box_list.csv")
+    plan.add_argument("--keep-rank", type=int, default=30)
+    plan.add_argument("--batch", type=int, default=14,
+                      help="names per search string")
+    plan.add_argument("--storage", type=int, default=326)
+    plan.add_argument("--buddy", default="PANCHAM")
 
     powerup = sub.add_parser("powerup", help="stardust and candy for a climb")
     powerup.add_argument("--from", dest="start", type=float, required=True)
@@ -359,6 +430,7 @@ def main(argv=None):
         "keepers": cmd_keepers,
         "evolve": cmd_evolve,
         "box": cmd_box,
+        "plan": cmd_plan,
         "powerup": cmd_powerup,
     }[args.command](gm, args)
 

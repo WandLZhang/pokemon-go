@@ -180,7 +180,7 @@ def type_leaderboard(gm, level=40.0, same_type_only=True):
 
 
 def evaluate(gm, holdings, keep_rank=30, keep_one_of_each=False,
-             respect_favorites=True):
+             respect_favorites=True, buddy=None):
     """Score every holding, then call it.
 
     keep_rank is how deep a species has to place in its best type to earn a
@@ -218,7 +218,11 @@ def evaluate(gm, holdings, keep_rank=30, keep_one_of_each=False,
         ranked = bool(h.type_rank) and h.type_rank <= keep_rank
         evolving = h.final.template_id != h.species.template_id
 
-        if h.cp_is_impossible:
+        if buddy and h.species.pokemon_id == buddy.upper() and h.copy_index == 0:
+            # The game refuses to transfer your active buddy.
+            h.verdict = "BUDDY"
+            h.reason = "your buddy, the game won't transfer it"
+        elif h.cp_is_impossible:
             h.verdict = "RECHECK"
             h.reason = f"CP {h.cp} is below the game minimum of {MIN_CP}"
         elif ranked and h.copy_index == 0 and evolving:
