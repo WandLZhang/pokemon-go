@@ -348,6 +348,81 @@ def cmd_plan(gm, args):
     return 0
 
 
+def cmd_roster(gm, args):
+    """The strongest six you can field per attacking type, and what each costs.
+
+    A raid party is six, so that's the unit. Each Pokemon is scored at its
+    final evolved form, since evolving costs no stardust and is therefore
+    the cheapest upgrade available. One Pokemon can hold a slot in two types
+    when it carries two same-type movesets.
+    """
+    holdings = roster.evaluate(gm, roster.load_list(gm, args.list),
+                               keep_rank=args.keep_rank,
+                               respect_favorites=False)
+    target = battle.neutral_target()
+    ranks = roster.type_leaderboard(gm)
+
+    per_type = {}
+    for h in holdings:
+        final = h.final
+        attacker = battle.build(gm, final, DEFAULT_IVS, args.level)
+        best = {}
+        for _, fast, charged_id, charged in battle.movesets(gm, final):
+            if fast.type != charged.type:
+                continue
+            dps = battle.cycle_dps(gm, attacker, target, fast, charged)
+            if dps > best.get(charged.type, (0.0, None))[0]:
+                best[charged.type] = (dps, charged_id)
+        for move_type, (dps, charged_id) in best.items():
+            per_type.setdefault(move_type, []).append((dps, h, charged_id))
+
+    gaps = []
+    for move_type in sorted(per_type):
+        rows = sorted(per_type[move_type], key=lambda r: -r[0])
+        # One entry per end species. You field one Granbull, not three, and
+        # the spare copies tie on DPS because DPS is scored at a fixed level.
+        # Within a species the highest CP wins, so sort on that first.
+        rows.sort(key=lambda r: (-r[0], -(r[1].cp or 0)))
+        seen, team = set(), []
+        for dps, h, charged_id in rows:
+            key = h.final.pokemon_id
+            if key in seen:
+                continue
+            seen.add(key)
+            team.append((dps, h, charged_id))
+            if len(team) == args.size:
+                break
+
+        world_best = max((e[2] for e in ranks.values()
+                          if e[1] == move_type), default=0.0)
+        lead = team[0][0] if team else 0.0
+        share = lead / world_best * 100 if world_best else 0
+        print(f"\n{move_type}   best {lead:.1f} DPS, {share:.0f}% of the "
+              f"strongest {move_type} attacker in the game")
+        if share < args.gap:
+            gaps.append((share, move_type))
+        for i, (dps, h, charged_id) in enumerate(team, 1):
+            evolving = h.final.template_id != h.species.template_id
+            if evolving:
+                proj = roster.evolved_cp(h.cp, h.species, h.final)
+                cp = f"{proj[0]}-{proj[1]}" if proj else "?"
+                items = ", ".join(roster.ITEM_NAMES.get(x, x)
+                                  for x in h.items_to_final if x)
+                cost = f"{h.candy_to_final} candy" + (f" + {items}" if items else "")
+                what = f"{h.species_name} {h.cp} -> {h.final.name} {cp} CP"
+            else:
+                cost = "ready"
+                what = f"{h.final.name} {h.cp} CP"
+            flags = f" [{','.join(sorted(h.flags))}]" if h.flags else ""
+            print(f"  {i}. {what:<44} {dps:>5.1f}  {cost}{flags}")
+
+    if gaps:
+        print(f"\nWeakest coverage, under {args.gap}% of the game's best:")
+        for share, move_type in sorted(gaps):
+            print(f"  {move_type:<10} {share:.0f}%")
+    return 0
+
+
 def cmd_powerup(gm, args):
     try:
         cost = battle.powerup_cost(gm, args.start, args.end)
@@ -414,6 +489,14 @@ def main(argv=None):
     plan.add_argument("--storage", type=int, default=326)
     plan.add_argument("--buddy", default="PANCHAM")
 
+    rost = sub.add_parser("roster", help="your best six per attacking type")
+    rost.add_argument("--list", default="data/box_list.csv")
+    rost.add_argument("--keep-rank", type=int, default=30)
+    rost.add_argument("--size", type=int, default=6)
+    rost.add_argument("--level", type=float, default=DEFAULT_LEVEL)
+    rost.add_argument("--gap", type=float, default=70.0,
+                      help="flag types under this %% of the game best")
+
     powerup = sub.add_parser("powerup", help="stardust and candy for a climb")
     powerup.add_argument("--from", dest="start", type=float, required=True)
     powerup.add_argument("--to", dest="end", type=float, required=True)
@@ -431,6 +514,7 @@ def main(argv=None):
         "evolve": cmd_evolve,
         "box": cmd_box,
         "plan": cmd_plan,
+        "roster": cmd_roster,
         "powerup": cmd_powerup,
     }[args.command](gm, args)
 

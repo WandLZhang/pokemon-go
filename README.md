@@ -70,14 +70,14 @@ You can't receive items until you're under 550. Counts live in
 | Rare Candy | 6 | Hold for a legendary you're short on |
 | Sinnoh Stone | 5 | **Hold.** Nothing is at 100 candy yet. See above |
 | Lure Module | 5 | Keep |
-| Metal Coat | 3 | Only Scyther wants one. **Two are dead weight** |
+| Metal Coat | 3 | Scyther 1541 -> Scizor, 50 candy. **Two are dead weight** |
 | Unova Stone | 3 | Only Minccino wants one. **Two are dead weight** |
 | Incense | 3 | Keep |
 | Shadow Shard | 3 | **Beat one grunt** for the fourth |
 | Charged TM | 2 | Hold for a raid attacker with a bad charged move |
 | Sun Stone | 2 | Petilil and Helioptile. Neither is a raid attacker |
 | Dragon Scale | 1 | Your shiny Horsea, 125 candy |
-| Upgrade | 1 | No Porygon in the box. Dead until you catch one |
+| Upgrade | 1 | **Porygon 770.** Upgrade then Sinnoh Stone makes Porygon-Z, your best Normal attacker |
 | Revive | 1 | **Spin gyms before you raid.** Level 40 pays 20 Max Revives |
 | Star Piece | 1 | Save for a Community Day |
 | Super Rocket Radar | 1 | **Use it.** See step 4 |
