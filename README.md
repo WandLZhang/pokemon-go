@@ -4,183 +4,147 @@ Roster and bag for WillisZhang. Raids first, GO Battle League second.
 
 Season: Twilight Trails, Sept 8 to Dec 1 2026. GO Battle League Season 28.
 
-Game mechanics: [reference.md](reference.md). Ranking engine: [rank.py](rank.py).
+## Do this next
 
-## Do this now
+**1. Clear the bag.** It reads 571 of 550, so PokeStops are giving you nothing.
 
-1. **Hold all 5 Sinnoh Stones. You can't spend any of them yet.**
+- Poke Ball 236 down to 50. You hold 82 Ultra and 41 Great; at level 39 the
+  Poke Balls do nothing.
+- All 11 Hyper Potions. Max Potion does the same job and you hold 52.
 
-   The stones aren't the constraint, candy is. Every one of these costs 100
-   candy, 120 if it's shadow and 90 if it's purified. Every entry in your
-   stone picker is greyed out, which means no species is at 100.
+That's 571 to 374, and item income restarts.
 
-   | Evolve | CP | Becomes | Rank |
-   |---|---|---|---|
-   | Piloswine (shiny) | 1385 | Mamoswine | **#3 Ground** |
-   | Roselia (favorite) | 1553 | Roserade | **#4 Grass** |
-   | Togetic | 955 | Togekiss | #7 Fairy |
-   | Electabuzz | 1310 | Electivire | #8 Electric |
-   | Gligar | 1046 / 371 | Gliscor | #19 Ground |
-   | Lickitung | 793 | Lickilicky | #46 Ghost |
+**2. Evolve the five the game offers.** Search `evolve` in your Pokemon list.
 
-   Skip Murkrow and Misdreavus. You already own **Honchkrow 2163** and
-   **Mismagius 1884**, so both evolutions buy nothing.
-
-   **Piloswine is the best target on the board.** Catch Swinub. Buddy walking
-   won't get you there: 3 km per candy means 300 km for the hundred, against
-   the 1,701 km you've logged in the life of the account. Catching pays 3
-   candy, 6 with a Pinap, and you hold 39 Pinap.
-
-2. **Done.** 145 transferred, storage 326 to 180, 145 free slots. Transfers
-   pay one candy each and no stardust.
-
-   First run `@special`, `costume` and `xxl` in the search bar and favorite
-   whatever they return. The box list carries none of those flags, so the
-   plan can't see them. A legacy move can't be restored by any Elite TM, a
-   costume can't be re-caught, and an XXL is worth 178 bonus points in a
-   Showcase. When the transfer prompt offers to INCLUDE them, leave them out.
-
-3. **Drop Poke Ball 236 to 50, and all 11 Hyper Potions.** Frees 197 and takes
-   the bag to 374 of 550. You hold 82 Ultra Balls and 41 Great Balls, so the
-   Poke Balls do nothing at level 39.
-
-4. **Fight Giovanni.** Your Super Rocket Radar is unused. It came from GO
-   Pass: Flying Taxi, which expired on July 1, so there's no way to get
-   another one. He closes with **Shadow Reshiram**, and Shadow adds 1.2x
-   attack.
-
-5. **Beat one Rocket grunt.** You hold 3 Shadow Shards and 4 refine into a
-   Purified Gem. One grunt drops one shard.
-
-Giovanni's lineup: Shadow Persian, then one of Shadow Rhyperior, Shadow
-Machamp or Shadow Kangaskhan, then Shadow Reshiram. Bring Fighting for the
-first and third slots, Psychic for Machamp, and Ground or Rock for Reshiram.
-Your Rhyperior is the Reshiram answer.
-
-## Bag, 571 of 550
-
-You can't receive items until you're under 550. Counts live in
-`data/bag.json`, and they reconcile to 571.
-
-| Item | Count | Call |
+| Evolve | Leads to | Worth it? |
 |---|---|---|
-| Poke Ball | 236 | **Drop to 50.** You have 82 Ultra and 41 Great |
-| Ultra Ball | 82 | Keep. This is your catching stock |
-| Max Potion | 52 | Keep. Raid currency |
-| Great Ball | 41 | Keep |
-| Pinap Berry | 39 | Keep. Doubles catch candy |
-| Razz Berry | 38 | Keep |
-| Premium Battle Pass | 14 | **14 raid entries.** Spend them on the Fire and Ground bosses you're short of |
-| Nanab Berry | 13 | Drop if you need more room. It calms, it doesn't help you catch |
-| Hyper Potion | 11 | **Drop all.** Max Potion replaces it |
-| Rare Candy | 6 | Hold for a legendary you're short on |
-| Sinnoh Stone | 5 | **Hold.** Nothing is at 100 candy yet. See above |
-| Lure Module | 5 | Keep |
-| Metal Coat | 3 | Scyther 1541 -> Scizor, 50 candy. **Two are dead weight** |
-| Unova Stone | 3 | Only Minccino wants one. **Two are dead weight** |
-| Incense | 3 | Keep |
-| Shadow Shard | 3 | **Beat one grunt** for the fourth |
-| Charged TM | 2 | Hold for a raid attacker with a bad charged move |
-| Sun Stone | 2 | Petilil and Helioptile. Neither is a raid attacker |
-| Dragon Scale | 1 | Your shiny Horsea, 125 candy |
-| Upgrade | 1 | **Porygon 770.** Upgrade then Sinnoh Stone makes Porygon-Z, your best Normal attacker |
-| Revive | 1 | **Spin gyms before you raid.** Level 40 pays 20 Max Revives |
-| Star Piece | 1 | Save for a Community Day |
-| Super Rocket Radar | 1 | **Use it.** See step 4 |
-| Rocket Radar, Poffin, Egg Incubator, Raid Pass, 3 special Lures, Daily Adventure Incense | 1 each | Keep |
+| Popplio 862 | Primarina, #6 Fairy | Yes, the only one that adds an attacker |
+| Chimchar 533 | Infernape, #15 Fire | Yes, new to the bench |
+| Bulbasaur 625 | Venusaur 1524-1667 | Barely. You own Venusaur 1435 |
+| Charmander 402 | Charizard 1184-1323 | No. You own Charizard 1673 |
+| Pancham 823 | Pangoro, #32 Dark | No. Your buddy, weak attacker |
 
-Gifts and stickers sit outside the bag and don't count toward the 550.
+Do all five anyway. That candy has no other use and each one pays 1,000 XP.
+Only the first step of each is affordable, so none reach the end form today.
 
-## Trainer
+**3. Raid. This is the real move.**
 
-| Stat | Value |
+Raids need no candy, which is the wall everything else sits behind. You hold
+14 Premium Battle Passes, and each tier 5 win pays 10,000 XP, 500 stardust,
+3 XL candy, and a chance at Rare Candy.
+
+Zamazenta is the live tier 5 through Sept 22. Fighting and Steel, so bring
+Fire and Ground. Your best six as the box stands:
+
+| | Pokemon | DPS | Moveset |
+|---|---|---|---|
+| 1 | Pheromosa 1182 | 23.6 | Low Kick + Focus Blast |
+| 2 | Flareon 1532 | 20.1 | Fire Spin + Overheat |
+| 3 | Excadrill 1469 | 19.9 | Mud Slap + Earthquake |
+| 4 | Charizard 1673 | 19.5 | Fire Spin + Blast Burn |
+| 5 | Rhyperior 1734 | 18.9 | Mud Slap + Earthquake |
+| 6 | Pyroar 2117 | 18.4 | Fire Fang + Overheat |
+
+**4. Level 40 lands on its own.** 14 raids at 10,000 plus 53 evolutions at
+1,000 covers the 193,417 you need. It pays +50 Pokemon storage, +75 item bag,
+20 Max Revives, 40 Ultra Balls and an Elite Fast TM.
+
+**5. Giovanni last.** The Super Rocket Radar can't be replaced, and by then
+you have a free slot and a better team. He closes with Shadow Reshiram:
+Fighting for Persian, Psychic for Machamp, Rhyperior for Reshiram.
+
+## Where you are
+
+| | |
 |---|---|
-| Level | 39 |
-| XP to level 40 | 193,417 |
-| Total XP | 3,759,583 |
-| **Stardust** | **36,934** |
-| Caught | 2,359 |
-| Walked | 1,701.2 km |
-| PokeStops | 1,155 |
-| Friends | 23 |
+| Trainer level | 39, 193,417 XP short of 40 |
+| Stardust | 36,934 |
+| Box | 180 of 325, after transferring 145 |
+| Bag | 571 of 550, over cap |
 | Buddy | Pancham |
 
-Your power-up ceiling is level 49. Reaching trainer level 40 raises it to 50.
+**Stardust is the binding constraint.** 36,934 buys about six power-ups at
+level 30 and above, and one Pokemon from level 30 to 40 costs 150,000.
+Evolving costs no dust, so evolve freely and power up almost nothing until
+raids refill it.
 
-**Stardust is the binding constraint, not candy and not items.** 36,934 buys
-about six power-ups at level 30 and above. Taking one Pokemon from level 30 to
-40 costs 150,000. Evolving costs no dust at all, so evolve freely and power up
-almost nothing until the dust recovers.
+### Type coverage
 
-Level 40 also drops 137 items into the bag and grows the bag by 75. The full
-reward list is in [reference.md](reference.md#trainer-level-40).
+Maxed: Bug, Dark, Rock, Steel, Water. Close behind: Flying 99%, Ghost 97%,
+Poison 97%, Fighting 95%.
 
-## Roster
+Weakest: Normal 70%, Dragon 73%, Fire 76%, Ice 78%, Ground 80%, Psychic 81%,
+Fairy 81%. Dragon and Fire don't close by evolving. Those need raid
+legendaries, which is one more reason to spend the passes.
 
-**Storage is 326 / 325. You're over the cap, which blocks catching.**
+### The five Sinnoh Stones
 
-`data/box_list.csv` holds 325 of those 326, transcribed by hand from
-overlapping screenshots. Every row has a CP, none is below the game minimum
-of 10, and every species resolves against the game master. A Sinnoh Stone
-picker screenshot covering 12 species agrees on all 12.
+None are spendable. Every candidate is short of the 100 candy, which is what
+the greyed-out stone picker means. Ranked for when the candy arrives:
 
-Run `python rank.py box`.
+| Stone to | Buys |
+|---|---|
+| Piloswine to Mamoswine | 13.9 Ground and 13.0 Ice, your two weak useful types |
+| Porygon to Porygon-Z | 14.6 Normal, your worst type. Also uses the Upgrade |
+| Roselia to Roserade | 14.1 Grass, 13.4 Poison |
+| Electabuzz to Electivire | 13.9 Electric |
+| Togetic to Togekiss | 11.9 Fairy |
 
-Transferring never removes a Pokedex entry. A species stays registered once
-caught, so keeping one of every species is a collection preference. `box`
-treats it that way and only keeps one of each when you pass `--collection`.
-
-The game refuses to transfer a favorite, so those land in their own bucket
-and need unfavoriting first.
-
-Still waiting on `data/box.csv`, the Calcy IV export, for the IV tiebreak
-among the keepers and for anything PvP.
-
-Calcy reads one Pokemon at a time, so scanning a whole box costs an evening.
-`python rank.py keepers` cuts it down. It ranks every species by its best
-charged move per type against a neutral target, then prints the names as
-Pokemon GO search strings. Paste a batch into the in-game search bar, scan
-what matches in Calcy, and transfer the rest. At `--per-type 8` that's 77
-names instead of the full box. A name you don't own matches nothing, so the
-search filters itself.
-
-Appraisal-scan before exporting. Calcy writes an IV range for anything you
-never appraised, and the loader flags those rows rather than ranking them.
-
-### Getting the CSV off the phone
-
-There's no route from this workstation to an Android device, and `adb` needs
-one. Calcy's export goes through the Android share sheet, so send it either
-way:
-
-1. Attach the CSV in chat. It lands on disk here, the same as a screenshot.
-2. Share it to Google Drive, then share that file with
-   `admin@williszhang.altostrat.com`. The gcloud token on this box carries the
-   `drive` scope, so it can pull the file directly.
-
-Calcy writes the CSV from its **History** screen, in the three-dot menu, not
-from the renaming settings.
+Skip Murkrow and Misdreavus. You own Honchkrow 2163 and Mismagius 1884.
 
 ## Running it
 
 ```sh
 source .venv/bin/activate
-./fetch.sh                      # pull the current game master
-python rank.py selftest         # 39 checks against published values
-python rank.py constants        # every constant the ranking uses
-python rank.py counters ZAMAZENTA --tier 5 --top 15
-python rank.py counters ZAMAZENTA --box data/box.csv --level-cap 49
-python rank.py box                    # keep or transfer, per Pokemon
-python rank.py keepers --per-type 8   # which Pokemon are worth scanning
-python rank.py evolve                 # what your evolution items can buy
-python rank.py powerup --from 30 --to 40
+./fetch.sh                  # refresh the game master
+python rank.py selftest     # 39 checks against published values
 ```
 
-`data/bag.json` holds the item counts read off the screenshots. `evolve`
-reads it, so correcting a count there corrects the advice.
+| Command | Answers |
+|---|---|
+| `roster` | Your best six per attacking type, and what each slot costs |
+| `box` | Keep, evolve, hold or transfer, per Pokemon |
+| `plan` | The transfer pass as paste-able search strings |
+| `evolve` | What each evolution item in the bag can buy |
+| `keepers` | Which species are worth scanning into Calcy |
+| `counters BOSS` | Rank attackers against a raid boss |
+| `powerup --from --to` | Stardust and candy for a climb |
+| `constants` | Every constant the ranking uses |
 
-`counters` ranks every species at level 40 with perfect IVs, including forms
-you can't obtain. Pass `--box` to rank what you own.
+`plan --markdown` prints one fenced block per search line. A multi-line block
+pasted into the game's single-line search field drops everything after the
+first newline.
+
+## Layout
+
+| Path | Holds |
+|---|---|
+| `data/box_list.csv` | The box. Species, CP, shiny, shadow, favorite, tag |
+| `data/bag.json` | Item counts, reconciled to the in-game total |
+| `data/gamemaster.stamp` | Date and SHA of the game master in use |
+| `pogo/gamemaster.py` | Loads and indexes the PokeMiners dump |
+| `pogo/battle.py` | CPM, CP, damage, cycle DPS, TDO, power-up costs |
+| `pogo/roster.py` | Turns the box into keep or transfer calls |
+| `pogo/box.py` | Calcy IV CSV loader |
+| `pogo/cli.py` | Commands and the argument parser |
+| `scripts/adb/` | Pulling data off an Android phone. Has its own README |
+| `reference.md` | Verified game mechanics, each constant named to its source |
+
+Nothing in `data/` is guessed. Every number traces to the game master, a
+screenshot, or a cited source.
+
+## Data quality
+
+`data/box_list.csv` was 325 rows transcribed by hand from overlapping
+screenshots, then validated against an independent Sinnoh Stone picker
+screenshot on all 12 species it covered. The 145 transferred rows are gone,
+leaving 180.
+
+It carries no IVs, no candy counts, no legacy moves, no costumes and no size.
+List-view screenshots don't show those. For raids that's fine: a perfect IV
+spread is worth 3 to 5% DPS while one level band is worth more. Before any
+mass transfer, search `@special`, `costume` and `xxl` in game and favorite
+what they return.
 
 Run `/verify` before committing. It dispatches read-only audit agents over the
 docs and the constants. Fix every finding.

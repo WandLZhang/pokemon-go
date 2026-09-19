@@ -1,19 +1,14 @@
 #!/usr/bin/env python3
-"""
-@file transcribe.py
-@brief Transcribe Pokemon GO scroll-capture screenshots into structured JSON.
+"""Transcribe scroll-capture screenshots into structured JSON.
 
-@details The capture scripts produce a sequence of overlapping screenshots of
-a scrolling list (item bag or Pokemon box). Reading those by hand is slow and
-error prone, and the overlap means the same row appears in several frames. We
-send every frame to Gemini in one multimodal request so the model can see the
-whole sequence at once and reconcile the overlap itself, rather than us trying
-to stitch rows with brittle heuristics.
+The capture scripts produce overlapping frames of a scrolling list, so the
+same row shows up several times. Every frame goes to Gemini in one request
+and the model reconciles the overlap itself.
 
-Uses Vertex AI with application default credentials.
+Read the CARD LAYOUT note in the prompt before changing anything. The first
+run of this script shifted every CP by one row, and that note is the fix.
 
-@author pokemon-go tooling
-@date 2026-09-18
+Runs on Vertex AI with application default credentials.
 """
 
 import argparse
@@ -24,7 +19,7 @@ from pathlib import Path
 from google import genai
 from google.genai import types
 
-MODEL = "gemini-2.5-flash"
+MODEL = "gemini-3.8-flash"
 PROJECT = "wz-mobile-coding"
 LOCATION = "global"
 
@@ -59,8 +54,22 @@ BOX_PROMPT = """These are sequential, overlapping screenshots of the Pokemon GO
 Pokemon storage list, scrolling from the top to the bottom.
 
 Transcribe every distinct Pokemon into JSON. Rules:
+
+CARD LAYOUT, READ THIS FIRST. Each card stacks vertically as:
+  CP number
+  sprite
+  name
+  HP bar
+So a CP number belongs to the sprite and name DIRECTLY BELOW it, never the
+name above it. Attaching each CP to the row above is the single error this
+prompt exists to prevent; it shifted every value on the first run.
+
 - The frames OVERLAP. The same Pokemon appears in multiple frames. Report each
-  entry exactly ONCE, in list order.
+  entry once only, in list order.
+- A row at the very top of a frame often has its CP scrolled out of view.
+  Find that row's CP in the PREVIOUS frame, where it sits lower on screen.
+  Report null only when no frame shows it.
+- Minimum CP in the game is 10. Any value below that is a misread.
 - For each Pokemon record: name, CP, and any visible markers (shiny, lucky,
   shadow, purified, favorite, buddy, mega, background/costume, traded).
 - If a nickname is shown instead of the species name, record it as given.
@@ -75,13 +84,7 @@ Return ONLY valid JSON, no markdown fences, in this exact shape:
 
 
 def load_frames(frame_dir: Path) -> list[Path]:
-    """
-    @brief Collect the PNG frames of a capture run in scroll order.
-
-    @param frame_dir Directory written by scroll_capture.sh.
-
-    @return Sorted list of frame paths.
-    """
+    """Collect the PNG frames of a capture run in scroll order."""
     frames = sorted(frame_dir.glob("*.png"))
     if not frames:
         raise SystemExit(f"no PNG frames in {frame_dir}")
@@ -89,19 +92,7 @@ def load_frames(frame_dir: Path) -> list[Path]:
 
 
 def transcribe(frames: list[Path], prompt: str, model: str = MODEL) -> dict:
-    """
-    @brief Send all frames to Gemini in one request and parse the JSON reply.
-
-    @details Sending the whole sequence at once (rather than frame by frame)
-    is what lets the model dedupe the scroll overlap and recover counts that
-    are clipped at a frame boundary.
-
-    @param frames Ordered frame paths.
-    @param prompt Task instructions describing the expected JSON shape.
-    @param model Model identifier to use.
-
-    @return Parsed JSON object from the model.
-    """
+    """Send all frames to Gemini in one request and parse the JSON reply."""
     client = genai.Client(vertexai=True, project=PROJECT, location=LOCATION)
 
     parts = [types.Part.from_text(text=prompt)]
