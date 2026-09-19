@@ -34,9 +34,10 @@ Name these in every agent prompt. They produce nearly every error here.
    the current game master, not a blog post. Read the current season off the
    top of `README.md` and pass it to each agent. GamePress shut its Pokemon GO
    wiki down, so every `gamepress.gg/pokemongo` link 404s.
-3. **CSV misreads.** Calcy IV writes IV ranges where no appraisal was scanned,
-   plus form, costume, shadow, lucky and gender columns that are easy to map
-   to the wrong field. A parse that looks tidy can still be wrong.
+3. **Transcription drift.** `data/box_list.csv` comes from screenshots. A
+   card stacks CP, sprite, name, HP bar, so a CP belongs to the row below it.
+   The list view shows no IVs, candy, legacy moves, costumes or size, and
+   `box_list.csv` has no form column, so regional variants collapse together.
 
 ## Agents
 
@@ -94,6 +95,18 @@ line, the current text, and a concrete rewrite.
 - A boss with no moveset reported as "nothing could attack this boss".
 - Citing `gamepress.gg/pokemongo` and the 2019 GO Hub damage-mechanics page,
   which still prints the superseded 1.4x multipliers.
+- `evaluate` grouping copies by the current species while the rank came from
+  the final form, which told you to evolve a Charmander into a Charizard you
+  already own.
+- `evolved_cp` sampling only the uniform IV corners and ignoring that the
+  displayed CP is floored.
+- `type_leaderboard` discarding its per-type table, so the caller rebuilt the
+  denominator wrong for Ghost and Poison.
+- `plan` ignoring `--collection`, `_boss` taking `matches[0]` from a substring
+  fallback, `roster --level` leaving the denominator at 40.
+- `Holding` being a value-equal dataclass, which made `copies.index()` right
+  only by accident.
+- `fetch.sh` using GNU `stat -c` and `sha256sum`, which both fail on macOS.
 
 ## Known and accepted, don't report as bugs
 
@@ -102,3 +115,5 @@ line, the current text, and a concrete rewrite.
 - No weather, friendship, Party Power, Mega bonus or dodging.
 - `counters` without `--box` lists forms you can't obtain, such as
   Eternamax Eternatus and Zen Darmanitan. `--box` avoids it.
+- `type_leaderboard` requires both moves to share a type. That excludes the
+  true best attacker in 7 of 18 types, and the output says so.
