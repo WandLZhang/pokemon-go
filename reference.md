@@ -90,8 +90,8 @@ which is the energy term.
 | 40 to 50 | 250,000 | 0 | 296 |
 | 30 to 50 | 400,000 | 182 | 296 |
 
-The cost arrays are indexed by whole level and charged once per half-level
-step. Level 40 to 41 pays `stardustCost[39]` twice. A wrong index still
+The cost arrays index by whole level. Each level charges that cost twice,
+once per half-level step. Level 40 to 41 pays `stardustCost[39]` twice. A wrong index still
 produces plausible totals, so `selftest` pins all four rows.
 
 A Pokemon at level 30 already has 87% of the CP multiplier it will ever have,
@@ -101,7 +101,7 @@ one of them past 40.
 ## Evolution costs
 
 An evolution needs the candy and, for some lines, an item. Holding the item
-alone isn't enough, and the game greys out anything you can't afford rather
+alone isn't enough, and the game grays out anything you can't afford rather
 than saying why.
 
 | Variant | Candy | Game master field |
