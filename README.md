@@ -31,8 +31,8 @@ Game mechanics: [reference.md](reference.md). Ranking engine: [rank.py](rank.py)
    the 1,701 km you've logged in the life of the account. Catching pays 3
    candy, 6 with a Pinap, and you hold 39 Pinap.
 
-2. **Transfer 148 Pokemon.** `python rank.py plan` gives them as paste-able
-   search strings. Storage goes 326 to 178.
+2. **Done.** 145 transferred, storage 326 to 180, 145 free slots. Transfers
+   pay one candy each and no stardust.
 
    First run `@special`, `costume` and `xxl` in the search bar and favorite
    whatever they return. The box list carries none of those flags, so the
