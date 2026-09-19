@@ -31,8 +31,8 @@ Game mechanics: [reference.md](reference.md). Ranking engine: [rank.py](rank.py)
    the 1,701 km you've logged in the life of the account. Catching pays 3
    candy, 6 with a Pinap, and you hold 39 Pinap.
 
-2. **Transfer 130 Pokemon.** `python rank.py box` names them. That frees 137
-   slots and pays 137 candy plus stardust.
+2. **Transfer 130 Pokemon.** `python rank.py box` names them. That frees 130
+   slots, pays 130 candy plus stardust, and takes storage from 326 to 196.
 
 3. **Drop Poke Ball 236 to 50, and all 11 Hyper Potions.** Frees 197 and takes
    the bag to 374 of 550. You hold 82 Ultra Balls and 41 Great Balls, so the
@@ -68,7 +68,7 @@ You can't receive items until you're under 550. Counts live in
 | Nanab Berry | 13 | Drop if you need more room. It calms, it doesn't help you catch |
 | Hyper Potion | 11 | **Drop all.** Max Potion replaces it |
 | Rare Candy | 6 | Hold for a legendary you're short on |
-| Sinnoh Stone | 5 | **Spend all 5.** See above |
+| Sinnoh Stone | 5 | **Hold.** Nothing is at 100 candy yet. See above |
 | Lure Module | 5 | Keep |
 | Metal Coat | 3 | Only Scyther wants one. **Two are dead weight** |
 | Unova Stone | 3 | Only Minccino wants one. **Two are dead weight** |
