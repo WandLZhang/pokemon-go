@@ -432,6 +432,68 @@ def cmd_state(gm, args):
     return 0
 
 
+def cmd_next(gm, args):
+    """The ordered action sequence, derived so the steps can't contradict.
+
+    Hand-written steps drifted: one pass said transfer a Charmander and the
+    next said evolve it. Everything here comes from the same evaluate() call,
+    and the assertion below fails the command rather than print a sequence
+    where an early step destroys a later step's input.
+    """
+    trainer = json.loads(Path(args.trainer).read_text())
+    bag = json.loads(Path(args.bag).read_text())
+    holdings = roster.evaluate(gm, roster.load_list(gm, args.list),
+                               respect_favorites=False, buddy=trainer["buddy"])
+
+    buckets = {}
+    for h in holdings:
+        buckets.setdefault(h.verdict, []).append(h)
+    transfer = buckets.get("TRANSFER", [])
+    evolve = buckets.get("EVOLVE", [])
+
+    # The consistency check this command exists for.
+    clash = {id(h) for h in transfer} & {id(h) for h in evolve}
+    assert not clash, "a holding is both transferred and evolved"
+    overlap = {h.species_name for h in transfer} & {h.species_name for h in evolve}
+    if overlap:
+        print(f"warning: {sorted(overlap)} appear in both lists. Different "
+              f"copies, so check CP before acting.\n")
+
+    bag_total = sum(v["count"] for v in bag["items"].values())
+    step = 0
+
+    if transfer:
+        step += 1
+        names = sorted({h.species_name.split("_")[0].lower() for h in transfer})
+        print(f"{step}. Transfer {len(transfer)}. Box {len(holdings)} to "
+              f"{len(holdings) - len(transfer)}.\n   {','.join(names)}\n")
+
+    if bag_total > bag["capacity"]:
+        step += 1
+        print(f"{step}. Clear {bag_total - bag['capacity']} items. The bag is "
+              f"{bag_total} of {bag['capacity']}, so PokeStops pay nothing.\n")
+
+    # Unblocked work first. Raids need only passes, which are in the bag and
+    # countable. Evolutions need candy, which no file here tracks, so they
+    # can't be promised as a next action.
+    passes = bag["items"].get("Premium Battle Pass", {}).get("count", 0)
+    to_next = gm.required_xp[trainer["level"]] - trainer["total_xp"]
+    if passes:
+        step += 1
+        print(f"{step}. Raid. {passes} Premium Battle Passes, and raids need "
+              f"no candy. At 10,000 XP a tier 5 win that's "
+              f"{passes * 10000:,} of the {to_next:,} to level "
+              f"{trainer['level'] + 1}.\n")
+
+    step += 1
+    print(f"{step}. Evolve as candy allows. Search `evolve` in game, which is "
+          f"the only check on candy and items. {len(evolve)} holdings are "
+          f"worth it, none affordable today. Spend candy in this order:")
+    for h in sorted(evolve, key=lambda x: x.type_rank)[:args.top]:
+        print(f"     {h.species_name} {h.cp} -> {h.reason}")
+    return 0
+
+
 def cmd_powerup(gm, args):
     try:
         cost = battle.powerup_cost(gm, args.start, args.end)
@@ -507,6 +569,12 @@ def main(argv=None):
     state.add_argument("--bag", default="data/bag.json")
     state.add_argument("--trainer", default="data/trainer.json")
 
+    nxt = sub.add_parser("next", help="the ordered action sequence")
+    nxt.add_argument("--list", default="data/box_list.csv")
+    nxt.add_argument("--bag", default="data/bag.json")
+    nxt.add_argument("--trainer", default="data/trainer.json")
+    nxt.add_argument("--top", type=int, default=8)
+
     powerup = sub.add_parser("powerup", help="stardust and candy for a climb")
     powerup.add_argument("--from", dest="start", type=float, required=True)
     powerup.add_argument("--to", dest="end", type=float, required=True)
@@ -525,5 +593,6 @@ def main(argv=None):
         "plan": cmd_plan,
         "roster": cmd_roster,
         "state": cmd_state,
+        "next": cmd_next,
         "powerup": cmd_powerup,
     }[args.command](gm, args)

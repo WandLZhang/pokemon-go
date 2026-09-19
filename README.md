@@ -1,87 +1,68 @@
 # Pokemon GO
 
-Roster and bag for WillisZhang. Raids first, GO Battle League second.
+Roster and bag for WillisZhang, ranked for raids. Nothing here scores PvP.
 
 Season: Twilight Trails, Sept 8 to Dec 1 2026. GO Battle League Season 28.
 
-## Done
-
-- Transferred 145. Box 326 to 181, and catching is unblocked.
-- Dropped Poke Ball 236 to 50 and all 11 Hyper Potions. Bag 571 to 374, and
-  PokeStops pay again.
-
 ## Do this next
 
-**1. Transfer 11 more.** A grouping bug hid these: the tool ranked duplicate
-copies by the species you hold rather than the one it becomes, so a Charmander
-and the Charizard 1673 both looked like the only copy. Run `python rank.py
-plan --markdown`, or paste this one line:
+`python rank.py next` prints the sequence from the data. Steps appear only
+while they're needed, and the command asserts that no step transfers a
+Pokemon a later step wants to evolve.
 
-```
-charmander,grotle,jigglypuff,kirlia,machoke,magmar,monferno,petilil,piplup,seedot,togepi
-```
+**Candy blocks everything except raiding.** The `evolve` search returns four
+Pokemon, none of them an upgrade, so there's one unblocked move.
 
-Each is a worse route to something you already hold or already plan to evolve.
-Box 181 to 170.
-
-**2. Evolve the five the game offers.** Search `evolve` in your Pokemon list.
-
-| Evolve | Leads to | Worth it? |
-|---|---|---|
-| Popplio 862 | Primarina, #6 Fairy | Yes, the only one that adds an attacker |
-| Chimchar 533 | Infernape 1493-1668, #15 Fire | Yes, new to the bench |
-| Bulbasaur 625 | Venusaur 1524-1669 | Barely. You own Venusaur 1435 |
-| Charmander 402 | Charizard 1184-1323 | No. You own Charizard 1673 |
-| Pancham 823 | Pangoro, #32 Dark | No. Your buddy, weak attacker |
-
-Do all five anyway. That candy has no other use and each one pays 1,000 XP.
-Only the first step of each is affordable, so none reach the end form today.
-
-**3. Raid.**
-
-Raids need no candy. Candy blocks everything else. You hold 14 Premium
-Battle Passes, and each tier 5 win pays 10,000 XP, 500 stardust, 3 XL
-candy, and a chance at Rare Candy.
+**1. Raid.** 14 Premium Battle Passes, and raids need no candy. At 10,000 XP a
+tier 5 win that's 140,000 of the 193,417 to level 40. Each win also pays 500
+stardust, 3 XL candy and a shot at Rare Candy, which are the three things
+holding the rest of the plan up.
 
 Zamazenta is the live tier 5 through Sept 22. Fighting and Steel, so bring
-Fire and Ground. Your best six as the box stands:
+Fire and Ground. `python rank.py counters ZAMAZENTA --box` ranks your six.
 
-| | Pokemon | DPS | Moveset |
+Level 40 falls out of this step. It pays +50 Pokemon storage, +75 item bag,
+20 Max Revives, 40 Ultra Balls and an Elite Fast TM.
+
+**2. Evolve as candy arrives.** Spend it in this order. None of these are
+affordable today, so this is a shopping list, not a to-do list.
+
+| Evolve | Becomes | Rank | Cost |
 |---|---|---|---|
-| 1 | Pheromosa 1182 | 23.6 | Low Kick + Focus Blast |
-| 2 | Flareon 1532 | 20.1 | Fire Spin + Overheat |
-| 3 | Excadrill 1469 | 19.9 | Mud Slap + Earthquake |
-| 4 | Charizard 1673 | 19.5 | Fire Spin + Blast Burn |
-| 5 | Rhyperior 1734 | 18.9 | Mud Slap + Earthquake |
-| 6 | Pyroar 2117 | 18.4 | Fire Fang + Overheat |
+| Beldum 413 | Metagross 1603-1832 | **#1 Steel** | 125 candy |
+| Cranidos 807 | Rampardos 1461-1551 | **#1 Rock** | 50 candy |
+| Deino 586 | Hydreigon 2000-2253 | **#1 Dark** | 125 candy |
+| Sobble 772 | Inteleon 2085-2304 | **#1 Water** | 125 candy |
+| Trumbeak 621 | Toucannon 1129-1197 | #2 Flying | 100 candy |
+| Porygon 770 | Porygon-Z 1462-1539 | #3 Normal | 125 candy + Upgrade + Sinnoh Stone |
+| Piloswine 1385 | Mamoswine 1965-2017 | #3 Ground | 100 candy + Sinnoh Stone |
+| Tyrunt 913 | Tyrantrum 1746-1849 | #3 Rock | 50 candy |
 
-**4. Level 40 arrives without extra work.** 14 raids at 10,000 and 53
-evolutions at 1,000 is 193,000, against the 193,417 you need. Level 40 pays
-+50 Pokemon storage, +75 item bag, 20 Max Revives, 40 Ultra Balls and an
-Elite Fast TM.
+Cranidos and Tyrunt are the cheapest at 50, and Cranidos is a #1 in the game.
 
-**5. Giovanni last.** The Super Rocket Radar can't be replaced, and by then
-you have a free slot and a better team. He closes with Shadow Reshiram:
-Fighting for Persian, Psychic for Machamp, Rhyperior for Reshiram.
+**3. Giovanni.** The Super Rocket Radar can't be replaced, so go in with the
+team step 1 built. He closes with Shadow Reshiram: Fighting for Persian,
+Psychic for Machamp, Rhyperior for Reshiram.
 
 ## Where you are
 
-Run `python rank.py state`. It reads `data/trainer.json`, `data/bag.json` and
-`data/box_list.csv`, so it can't go stale the way a table here does.
+`python rank.py state` reads `data/trainer.json`, `data/bag.json` and
+`data/box_list.csv`, so it can't drift from them.
 
 ```
 WillisZhang, level 39, buddy Pancham
-  XP to 40        193,417
-  stardust         36,934
-  box                 181 of 325
-  bag                 374 of 550
+  XP to 40      193,417
+  stardust        36,934
+  box             171 of 325
+  bag             374 of 550
   power-up ceiling level 49
 ```
 
-**Stardust is the binding constraint.** 36,934 is 7 power-ups on a level 30
-Pokemon and 3 on a level 40 one. Taking one Pokemon from level 30 to 40 costs
-150,000. Evolving costs no dust, so evolve freely and power up almost nothing
-until raids refill it.
+**Two currencies, both empty.** Candy blocks evolving and stardust blocks
+powering up, which is why raiding is the only move left. 36,934 dust is 7
+power-ups on a level 30 Pokemon and 3 on a level 40 one, against 150,000 to
+take one Pokemon from level 30 to 40. So power up almost nothing until raids
+refill both.
 
 ### Type coverage
 
@@ -106,18 +87,21 @@ for Fairy. Against those, Dark is 83% and Water 94%, not 100%.
 
 ### The five Sinnoh Stones
 
-None are spendable. Every candidate is short of the 100 candy, which is what
-the grayed-out stone picker means. Ranked for when the candy arrives:
+**10 holdings want one and you hold 5.** Every one is also short of the
+100 candy, which is what the grayed-out picker means, so the stones aren't
+the binding item. Same ranking as step 2, filtered to the ones needing a
+stone:
 
-| Stone to | Buys |
-|---|---|
-| Piloswine to Mamoswine | 13.9 Ground and 13.0 Ice, your two weak useful types |
-| Porygon to Porygon-Z | 14.6 Normal, your worst type. Also uses the Upgrade |
-| Roselia to Roserade | 14.1 Grass, 13.4 Poison |
-| Electabuzz to Electivire | 13.9 Electric |
-| Togetic to Togekiss | 11.9 Fairy |
+| Evolve | Becomes | Rank |
+|---|---|---|
+| Porygon 770 | Porygon-Z | #3 Normal, your worst type. Also uses the Upgrade |
+| Piloswine 1385 | Mamoswine | #3 Ground, and #1 Ice |
+| Roselia 1553 | Roserade | #4 Grass |
+| Togetic 955 | Togekiss | #7 Fairy |
+| Electabuzz 1310 | Electivire | #8 Electric |
 
-Skip Murkrow and Misdreavus. You own Honchkrow 2163 and Mismagius 1884.
+Then Yanma #14, Tangela #17, Gligar #19, Magby #21, Dusclops #25. Spend the
+five from the top.
 
 ## Running it
 
@@ -129,13 +113,14 @@ python rank.py selftest     # 39 checks against published values
 
 | Command | Answers |
 |---|---|
+| `next` | The ordered action sequence, derived from `data/` |
+| `state` | Where the account stands |
 | `roster` | Your best six per attacking type, and what each slot costs |
 | `box` | Keep, evolve, hold or transfer, per Pokemon |
 | `plan` | The transfer pass as paste-able search strings |
 | `evolve` | What each evolution item in the bag can buy |
 | `counters BOSS --box` | Rank your box against a raid boss |
 | `powerup --from --to` | Stardust and candy for a climb |
-| `state` | Where the account stands, read from `data/` |
 | `constants` | Every constant the ranking uses |
 
 `plan --markdown` prints one fenced block per search line. A multi-line block
@@ -146,8 +131,8 @@ first newline.
 
 | Path | Holds |
 |---|---|
-| `data/box_list.csv` | The box. `species,cp,shiny,lucky,shadow,purified,favorite,tag` |
-| `data/bag.json` | Item counts, reconciled to the in-game total |
+| `data/box_list.csv` | The box. `species,cp,shiny,lucky,shadow,purified,favorite,tag,costume` |
+| `data/bag.json` | Item counts |
 | `data/trainer.json` | Level, XP, stardust, storage caps |
 | `data/gamemaster.stamp` | Date and SHA of the game master in use |
 | `pogo/gamemaster.py` | Loads and indexes the PokeMiners dump |
@@ -156,25 +141,25 @@ first newline.
 | `pogo/cli.py` | Commands and the argument parser |
 | `reference.md` | Verified game mechanics, each constant named to its source |
 
-Nothing in `data/` is guessed. Every number traces to the game master, a
-screenshot, or a cited source.
+Every number in `data/` traces to the game master, a screenshot, or a cited
+source. Two lines in `bag.json` are marked `derived`: the Poke Ball and Hyper
+Potion counts come from the drop that was made, not from a fresh scroll.
+Projected CP is a computed range, not an observation.
 
-## Data quality
+## Keeping it current
 
-`data/box_list.csv` holds 181 rows. It started at 325, transcribed by hand
-from overlapping screenshots. An independent Sinnoh Stone picker screenshot
-agreed on all 12 species it covered. 145 rows left in the transfer pass.
+The three files in `data/` are the state. Act in game, update the file, and
+every command follows. Don't hand-write numbers into this README that a
+command can print.
 
-`data/bag.json` reads 374 of 550. The Poke Ball and Hyper Potion lines are
-derived from the drop rather than a fresh screenshot, and stops have been
-paying since, so re-scroll the bag when you want it exact.
+`data/box_list.csv` carries no IVs, candy, legacy moves or size, and no form
+column, so regional variants collapse together. List-view screenshots don't
+show any of that. For raids the IV gap costs 3 to 5% DPS, less than one level
+band.
 
-`data/box_list.csv` carries no IVs, no candy counts, no legacy moves, no
-costumes and no size.
-List-view screenshots don't show those. For raids that's fine: a perfect IV
-spread is worth 3 to 5% DPS while one level band is worth more. Before any
-mass transfer, search `@special`, `costume` and `xxl` in game and favorite
-what they return.
+Before any mass transfer, search `@special`, `costume` and `xxl` in game and
+favorite what they return. The Piplup 611 marked `costume` is the one the game
+stopped; nothing else is checked.
 
 Run `/verify` before committing. It dispatches read-only audit agents over the
 docs and the constants. Fix every finding.

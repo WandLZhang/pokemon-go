@@ -12,15 +12,16 @@ from dataclasses import dataclass, field
 
 from . import battle
 
-FLAGS = ("shiny", "lucky", "shadow", "purified", "favorite")
+FLAGS = ("shiny", "lucky", "shadow", "purified", "favorite", "costume")
 
 # The game refuses to transfer a favorite, so these need unfavoriting first.
 LOCKED_FLAGS = ("favorite",)
 
 # Never put these in the transfer pile on raid value alone. A shadow gets a
-# 1.2x attack multiplier, so it beats its own normal form outright. A shiny
-# and a lucky can't be replaced by catching another one.
-PRECIOUS_FLAGS = ("shiny", "lucky", "shadow", "purified")
+# 1.2x attack multiplier, so it beats its own normal form outright. A shiny,
+# a lucky and a costume can't be replaced by catching another one, and a
+# costume is also blocked from Pokemon HOME.
+PRECIOUS_FLAGS = ("shiny", "lucky", "shadow", "purified", "costume")
 
 # Transferring never touches the Pokedex. A species stays registered once
 # caught, so keeping one of each is a collection choice, not a requirement.
