@@ -13,11 +13,19 @@ echo "fetching $URL"
 curl -fsS -o "$OUT.tmp" "$URL"
 mv "$OUT.tmp" "$OUT"
 
+# stat -c and sha256sum are GNU. macOS has neither, and both run after the
+# download succeeds, so the old version left you with the JSON and no stamp.
+if command -v sha256sum >/dev/null 2>&1; then
+  HASH="$(sha256sum "$OUT" | cut -d' ' -f1)"
+else
+  HASH="$(shasum -a 256 "$OUT" | cut -d' ' -f1)"
+fi
+
 {
   echo "url    $URL"
   echo "date   $(date -u +%Y-%m-%dT%H:%M:%SZ)"
-  echo "bytes  $(stat -c %s "$OUT")"
-  echo "sha256 $(sha256sum "$OUT" | cut -d' ' -f1)"
+  echo "bytes  $(wc -c < "$OUT" | tr -d ' ')"
+  echo "sha256 $HASH"
 } > data/gamemaster.stamp
 
 cat data/gamemaster.stamp
