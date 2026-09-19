@@ -1,7 +1,7 @@
 """Command line surface. rank.py is the entry point; this is the work.
 
 Commands split three ways: check the engine (selftest, constants), ask the
-game master a question (counters, keepers, powerup), or act on the box
+game master a question (counters, powerup), or act on the box
 (box, plan, roster, evolve).
 """
 
@@ -11,7 +11,7 @@ import logging
 import sys
 from pathlib import Path
 
-from pogo import battle, box, roster
+from pogo import battle, roster
 from pogo.gamemaster import GameMaster
 
 DEFAULT_LEVEL = 40.0
@@ -72,29 +72,25 @@ def _boss(gm, name, tier):
     matches = gm.find(name)
     if not matches:
         sys.exit(f"no species matches {name!r}")
-    species = matches[0]
+    exact = [s for s in matches if s.pokemon_id == name.upper().replace(" ", "_")]
+    if not exact and len(matches) > 1:
+        names = ", ".join(sorted(m.name for m in matches)[:12])
+        sys.exit(f"{name!r} matches {len(matches)} species: {names}. Be specific.")
+    species = (exact or matches)[0]
     return species, battle.build_boss(gm, species, tier)
 
 
 def _from_box(gm, path, level_cap):
-    entries, fuzzy = box.load(path)
-    if fuzzy:
-        print(f"warning: {len(fuzzy)} of {len(entries)} rows have IV ranges "
-              f"rather than exact IVs. Appraisal-scan those in Calcy IV first.",
-              file=sys.stderr)
-    out, unresolved = [], []
-    for entry in entries:
-        species = box.resolve(gm, entry)
-        if species is None:
-            unresolved.append(entry.species)
-            continue
-        level = entry.level or DEFAULT_LEVEL
-        level = min(level, level_cap)
-        combatant = battle.build(gm, species, entry.ivs, level, entry.shadow)
-        out.append((entry.nickname or species.name, combatant, entry, level))
-    if unresolved:
-        print(f"warning: {len(unresolved)} rows did not match a species: "
-              f"{sorted(set(unresolved))}", file=sys.stderr)
+    """Load the maintained box list as attackers at assumed perfect IVs.
+
+    box_list.csv has no IVs, and for raids that costs 3 to 5% DPS. Level is
+    unknown too, so everything is scored at level_cap. Read the output as
+    the ceiling of what you own, not what it does today.
+    """
+    out = []
+    for h in roster.load_list(gm, path):
+        combatant = battle.build(gm, h.species, DEFAULT_IVS, level_cap)
+        out.append((h.species_name, combatant, h, level_cap))
     return out
 
 
@@ -117,15 +113,15 @@ def cmd_counters(gm, args):
           f"T{args.tier}  atk={boss.attack:.1f} def={boss.defense:.1f} hp={boss.hp}")
 
     if args.box:
-        roster = _from_box(gm, args.box, args.level_cap)
-        source = f"{args.box} ({len(roster)} Pokemon)"
+        attackers = _from_box(gm, args.box, args.level_cap)
+        source = f"{args.box} ({len(attackers)} Pokemon)"
     else:
-        roster = _all_species(gm, args.level)
+        attackers = _all_species(gm, args.level)
         source = f"every species at level {args.level:g}, {'/'.join(map(str, DEFAULT_IVS))}"
     print(f"Attackers: {source}\n")
 
     rows = []
-    for name, attacker, entry, level in roster:
+    for name, attacker, entry, level in attackers:
         result = battle.matchup(gm, attacker, boss)
         if result is None:
             continue
@@ -147,45 +143,6 @@ def cmd_counters(gm, args):
         print("(nothing could attack this boss)")
     return 0
 
-
-def cmd_keepers(gm, args):
-    """The only Pokemon worth scanning into Calcy, by attacking type.
-
-    Everything not on this list is transfer fodder for a raids-first player,
-    so scanning it wastes an evening. The output is a Pokemon GO search
-    string: paste it in game and only the candidates show.
-    """
-    target = battle.neutral_target()
-    per_type = {}
-    for species in gm.unique_species():
-        attacker = battle.build(gm, species, DEFAULT_IVS, args.level)
-        for _, fast, charged_id, charged in battle.movesets(gm, species):
-            dps = battle.cycle_dps(gm, attacker, target, fast, charged)
-            if dps <= 0:
-                continue
-            best = per_type.setdefault(charged.type, {})
-            if dps > best.get(species.name, (0.0, None))[0]:
-                best[species.name] = (dps, charged_id)
-
-    keep = {}
-    for move_type in sorted(per_type):
-        ranked = sorted(per_type[move_type].items(), key=lambda kv: -kv[1][0])
-        top = ranked[:args.per_type]
-        print(f"\n{move_type}")
-        for i, (name, (dps, charged_id)) in enumerate(top, 1):
-            print(f"  {i:>2}. {name:<28} {dps:>6.2f} DPS  {_fmt_move(charged_id)}")
-        for name, _ in top:
-            keep.setdefault(name, set()).add(move_type)
-
-    # GO search matches the species name, so strip the form suffix and
-    # dedupe. A name you don't own simply matches nothing.
-    terms = sorted({name.split("_")[0].lower() for name in keep})
-    print(f"\n{len(keep)} forms, {len(terms)} distinct names to search.\n")
-    print("Paste these into the Pokemon GO search bar, one batch at a time:")
-    for i in range(0, len(terms), args.batch):
-        print(f"\n  {','.join(terms[i:i + args.batch])}")
-    print("\nScan what matches in Calcy IV. Transfer the rest.")
-    return 0
 
 
 def cmd_evolve(gm, args):
@@ -229,7 +186,7 @@ def cmd_evolve(gm, args):
             tag = f"{from_name} -> {into}"
             print(f"  {tag:<38} {candy:>4} candy  {dps:>6.2f} DPS  "
                   f"{_fmt_move(charged_id)}")
-        if len(scored) > args.top:
+        if args.top and len(scored) > args.top:
             print(f"  ... and {len(scored) - args.top} more, all below "
                   f"{scored[args.top - 1][0]:.2f} DPS")
     return 0
@@ -297,6 +254,7 @@ def cmd_plan(gm, args):
 
     holdings = roster.evaluate(gm, roster.load_list(gm, args.list),
                                keep_rank=args.keep_rank,
+                               keep_one_of_each=args.collection,
                                respect_favorites=False,
                                buddy=args.buddy)
     owned = collections.Counter(h.species.pokemon_id for h in holdings)
@@ -367,11 +325,11 @@ def cmd_roster(gm, args):
     the cheapest upgrade available. One Pokemon can hold a slot in two types
     when it carries two same-type movesets.
     """
-    holdings = roster.evaluate(gm, roster.load_list(gm, args.list),
-                               keep_rank=args.keep_rank,
-                               respect_favorites=False)
+    holdings = roster.load_list(gm, args.list)
+    for h in holdings:
+        h.final, h.candy_to_final, h.items_to_final = roster.final_form(gm, h.species)
     target = battle.neutral_target()
-    ranks = roster.type_leaderboard(gm)
+    ranks = roster.type_leaderboard(gm, level=args.level)
 
     per_type = {}
     for h in holdings:
@@ -452,7 +410,7 @@ def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__,
                                      formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("-v", "--verbose", action="store_true",
-                        help="log the parsed CSV payload row by row")
+                        help="log each parsed box row")
     sub = parser.add_subparsers(dest="command", required=True)
 
     sub.add_parser("selftest", help="check constants against known values")
@@ -462,20 +420,14 @@ def main(argv=None):
     counters.add_argument("boss")
     counters.add_argument("--tier", type=int, default=5,
                           choices=sorted(battle.RAID_TIERS))
-    counters.add_argument("--box", help="Calcy IV CSV export")
+    counters.add_argument("--box", nargs="?", const="data/box_list.csv",
+                          help="rank your box. Defaults to data/box_list.csv")
     counters.add_argument("--top", type=int, default=20)
     counters.add_argument("--sort", default="dps", choices=["dps", "tdo", "survival_s"])
     counters.add_argument("--level", type=float, default=DEFAULT_LEVEL,
                           help="level to assume when no box is given")
-    counters.add_argument("--level-cap", type=float, default=50.0,
-                          help="cap box levels, e.g. trainer level + 10")
-
-    keepers = sub.add_parser("keepers",
-                             help="which Pokemon are worth scanning, by type")
-    keepers.add_argument("--per-type", type=int, default=6)
-    keepers.add_argument("--level", type=float, default=DEFAULT_LEVEL)
-    keepers.add_argument("--batch", type=int, default=12,
-                         help="names per search string")
+    counters.add_argument("--level-cap", type=float, default=40.0,
+                          help="level to score box entries at")
 
     evolve = sub.add_parser("evolve", help="what your evolution items can buy")
     evolve.add_argument("--bag", default="data/bag.json")
@@ -498,12 +450,13 @@ def main(argv=None):
     plan.add_argument("--batch", type=int, default=14,
                       help="names per search string")
     plan.add_argument("--buddy", default="PANCHAM")
+    plan.add_argument("--collection", action="store_true",
+                      help="keep one of every species, matching box --collection")
     plan.add_argument("--markdown", action="store_true",
                       help="one fenced block per search line")
 
     rost = sub.add_parser("roster", help="your best six per attacking type")
     rost.add_argument("--list", default="data/box_list.csv")
-    rost.add_argument("--keep-rank", type=int, default=30)
     rost.add_argument("--size", type=int, default=6)
     rost.add_argument("--level", type=float, default=DEFAULT_LEVEL)
     rost.add_argument("--gap", type=float, default=70.0,
@@ -522,7 +475,6 @@ def main(argv=None):
         "selftest": cmd_selftest,
         "constants": cmd_constants,
         "counters": cmd_counters,
-        "keepers": cmd_keepers,
         "evolve": cmd_evolve,
         "box": cmd_box,
         "plan": cmd_plan,
