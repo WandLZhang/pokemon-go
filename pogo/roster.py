@@ -31,12 +31,6 @@ DEX_IS_PERMANENT = True
 RARE_CLASSES = ("POKEMON_CLASS_LEGENDARY", "POKEMON_CLASS_MYTHIC",
                 "POKEMON_CLASS_ULTRA_BEAST")
 
-# How much a holding that still needs candy is discounted against one that is
-# already the final form, when the two compete for the same slot. Without it
-# a 625 Bulbasaur projecting 1524 outranks a Venusaur 1435 you already own,
-# and the tool tells you to transfer the ready attacker.
-UNEVOLVED_DISCOUNT = 0.8
-
 # Minimum CP in Pokemon GO. Anything below it is a transcription error.
 MIN_CP = 10
 
@@ -246,18 +240,28 @@ def evaluate(gm, holdings, keep_rank=30, keep_one_of_each=False,
     # Machamp than a Machoke 860 does.
     def projected(h):
         band = evolved_cp(h.cp, h.species, h.final)
-        value = band[0] if band else (h.cp or 0)
-        if h.final.template_id != h.species.template_id:
-            value *= UNEVOLVED_DISCOUNT
-        return value
+        return band[0] if band else (h.cp or 0)
 
-    by_final = {}
+    # A slot has two claimants: the best one you can field today, and the
+    # best one candy could buy. Rank those two tracks separately so a Bagon
+    # can't evict the Salamence that is already fighting for you.
+    ready, potential = {}, {}
     for h in sorted(holdings, key=lambda x: -projected(x)):
-        by_final.setdefault(h.final.pokemon_id, []).append(h)
+        evolving = h.final.template_id != h.species.template_id
+        track = potential if evolving else ready
+        track.setdefault(h.final.pokemon_id, []).append(h)
 
     for h in holdings:
-        copies = by_final[h.final.pokemon_id]
-        h.copy_index = copies.index(h)
+        evolving = h.final.template_id != h.species.template_id
+        track = potential if evolving else ready
+        h.copy_index = track[h.final.pokemon_id].index(h)
+        # An unevolved copy only earns its own slot when it would actually
+        # beat what you can already field. Otherwise it's a worse duplicate
+        # that happens to cost candy.
+        if evolving and h.copy_index == 0:
+            best_ready = ready.get(h.final.pokemon_id)
+            if best_ready and projected(h) <= (best_ready[0].cp or 0):
+                h.copy_index = 1
         ranked = bool(h.type_rank) and h.type_rank <= keep_rank
         evolving = h.final.template_id != h.species.template_id
 
