@@ -26,6 +26,11 @@ PRECIOUS_FLAGS = ("shiny", "lucky", "shadow", "purified")
 # caught, so keeping one of each is a collection choice, not a requirement.
 DEX_IS_PERMANENT = True
 
+# Raid and research exclusives. You can't go catch another one, so these
+# never fall into the transfer pile on raid value alone.
+RARE_CLASSES = ("POKEMON_CLASS_LEGENDARY", "POKEMON_CLASS_MYTHIC",
+                "POKEMON_CLASS_ULTRA_BEAST")
+
 # Minimum CP in Pokemon GO. Anything below it is a transcription error.
 MIN_CP = 10
 
@@ -60,6 +65,8 @@ class Holding:
     @property
     def precious(self):
         """Irreplaceable, or strictly better than its normal form."""
+        if self.species.pokemon_class in RARE_CLASSES:
+            return True
         return bool(self.flags & set(PRECIOUS_FLAGS))
 
     @property
@@ -242,7 +249,8 @@ def evaluate(gm, holdings, keep_rank=30, keep_one_of_each=False,
             h.reason = "favorite, unfavorite it first"
         elif h.precious:
             h.verdict = "HOLD"
-            h.reason = ", ".join(sorted(h.flags))
+            klass = (h.species.pokemon_class or "").replace("POKEMON_CLASS_", "").lower()
+            h.reason = ", ".join(sorted(h.flags)) or klass.replace("_", " ")
         elif id(h) in collection:
             h.verdict = "COLLECTION"
             h.reason = "only copy"

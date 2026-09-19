@@ -338,8 +338,15 @@ def cmd_plan(gm, args):
           f"and transfer.\n   {swept} Pokemon across {len(sweep)} species, none "
           f"of which you keep a copy of.\n")
     names = [v[0].species_name for v in sweep.values()]
-    for batch in _search_batches(names, args.batch):
-        print(f"   {batch}")
+    batches = _search_batches(names, args.batch)
+    for i, batch in enumerate(batches, 1):
+        if args.markdown:
+            # One fenced block per line. A multi-line block copied into the
+            # game's single-line search field loses everything after the
+            # first newline.
+            print(f"\nLine {i} of {len(batches)}\n```\n{batch}\n```")
+        else:
+            print(f"   {batch}")
 
     if pick:
         picked = sum(len(v) for v in pick.values())
@@ -495,6 +502,8 @@ def main(argv=None):
                       help="names per search string")
     plan.add_argument("--storage", type=int, default=326)
     plan.add_argument("--buddy", default="PANCHAM")
+    plan.add_argument("--markdown", action="store_true",
+                      help="one fenced block per search line")
 
     rost = sub.add_parser("roster", help="your best six per attacking type")
     rost.add_argument("--list", default="data/box_list.csv")

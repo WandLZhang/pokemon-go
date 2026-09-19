@@ -72,6 +72,7 @@ class Species:
     elite_fast: list = field(default_factory=list)
     elite_charged: list = field(default_factory=list)
     shadow_available: bool = False
+    pokemon_class: str | None = None
     # (evolves_into, item_id or None, candy_cost)
     evolutions: list = field(default_factory=list)
 
@@ -165,6 +166,7 @@ class GameMaster:
                 elite_fast=settings.get("eliteQuickMove", []),
                 elite_charged=settings.get("eliteCinematicMove", []),
                 shadow_available="shadow" in settings,
+                pokemon_class=settings.get("pokemonClass"),
                 evolutions=[
                     (branch.get("evolution"),
                      branch.get("evolutionItemRequirement"),
