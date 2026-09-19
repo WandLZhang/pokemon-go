@@ -39,7 +39,7 @@ ITEM_NAMES = {
 @dataclass
 class Holding:
     species_name: str
-    cp: int
+    cp: int | None
     flags: set
     species: object
     final: object = None
@@ -59,7 +59,7 @@ class Holding:
 
     @property
     def cp_is_impossible(self):
-        return 0 < self.cp < MIN_CP
+        return self.cp is not None and self.cp < MIN_CP
 
 
 def load_list(gm, path):
@@ -75,9 +75,10 @@ def load_list(gm, path):
                 unresolved.append(name)
                 continue
             flags = {f for f in FLAGS if (row.get(f) or "0").strip() not in ("", "0")}
+            raw_cp = (row.get("cp") or "").strip()
             out.append(Holding(
                 species_name=name,
-                cp=int(row.get("cp") or 0),
+                cp=int(raw_cp) if raw_cp else None,
                 flags=flags,
                 species=matches[0],
             ))
@@ -170,14 +171,14 @@ def evaluate(gm, holdings, keep_rank=30, keep_one_of_each=False):
         best_of_species = {}
         for h in holdings:
             current = best_of_species.get(h.species.pokemon_id)
-            if current is None or h.cp > current.cp:
+            if current is None or (h.cp or 0) > (current.cp or 0):
                 best_of_species[h.species.pokemon_id] = h
         collection = {id(h) for h in best_of_species.values()}
 
     # Rank every copy of a species so only the best one earns the slot. A
     # second Nihilego adds nothing to a raid party you bring one of.
     by_species = {}
-    for h in sorted(holdings, key=lambda x: -x.cp):
+    for h in sorted(holdings, key=lambda x: -(x.cp or 0)):
         by_species.setdefault(h.species.pokemon_id, []).append(h)
 
     for h in holdings:

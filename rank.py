@@ -260,11 +260,12 @@ def cmd_box(gm, args):
 
     for verdict in ("RECHECK", "KEEP", "EVOLVE"):
         rows = [h for h in holdings if h.verdict == verdict]
-        rows.sort(key=lambda h: (h.type_rank or 9999, -h.cp))
+        rows.sort(key=lambda h: (h.type_rank or 9999, -(h.cp or 0)))
         print(f"\n== {verdict} ({len(rows)}) ==")
         for h in rows[:args.top]:
             flags = f" [{','.join(sorted(h.flags))}]" if h.flags else ""
-            print(f"  {h.species_name:<18} {h.cp:>5} CP  {h.reason}{flags}")
+            cp = f"{h.cp:>5}" if h.cp is not None else "    ?"
+            print(f"  {h.species_name:<18} {cp} CP  {h.reason}{flags}")
         if len(rows) > args.top:
             print(f"  ... {len(rows) - args.top} more")
 
@@ -275,7 +276,9 @@ def cmd_box(gm, args):
         for h in transfers:
             by_species.setdefault(h.species_name, []).append(h.cp)
         for name in sorted(by_species):
-            cps = ", ".join(str(c) for c in sorted(by_species[name], reverse=True))
+            cps = ", ".join(str(c) if c is not None else "?"
+                            for c in sorted(by_species[name],
+                                            key=lambda c: -(c or 0)))
             print(f"  {name:<18} {cps}")
         print(f"\n  Frees {len(transfers)} slots and pays "
               f"{len(transfers)} candy plus stardust.")
