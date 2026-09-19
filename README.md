@@ -8,20 +8,31 @@ Game mechanics: [reference.md](reference.md). Ranking engine: [rank.py](rank.py)
 
 ## Do this now
 
-1. **Spend all 5 Sinnoh Stones.** Fourteen Pokemon in the box want one. These
-   five pay best, and two of them are shiny:
+1. **Spend one Sinnoh Stone on Roselia. Hold the other four.**
 
-   | Evolve | CP | Becomes | Rank | Candy |
+   The stones aren't the constraint, candy is. Every one of these costs 100
+   candy, 120 if it's shadow and 90 if it's purified. A greyed-out entry in
+   the stone picker means you're short of candy for that species, and the bar
+   under each name is how far along you are.
+
+   | Evolve | CP | Becomes | Rank | Candy ready |
    |---|---|---|---|---|
-   | Piloswine (shiny) | 816 | Mamoswine | #3 Ground | 100 |
-   | Roselia (favorite) | 1553 | Roserade | #4 Grass | 100 |
-   | Togetic | 955 | Togekiss | #7 Fairy | 100 |
-   | Murkrow (shiny) | 1315 | Honchkrow | #7 Flying | 100 |
-   | Electabuzz | 1812 | Electivire | #8 Electric | 100 |
+   | Roselia (favorite) | 1553 | Roserade | **#4 Grass** | yes |
+   | Piloswine (shiny) | 1385 | Mamoswine | **#3 Ground** | partway |
+   | Murkrow | 1048 | Honchkrow | #7 Flying | no |
+   | Togetic | 955 | Togekiss | #7 Fairy | no |
+   | Electabuzz | 1310 | Electivire | #8 Electric | no |
+   | Gligar | 1046 / 371 | Gliscor | #19 Ground | one of them |
+   | Lickitung | 793 | Lickilicky | #46 Ghost | yes |
 
-   Evolve Togetic, not Togepi. Same end form, 25 less candy. Evolve the 1315
-   CP Murkrow even though a Honchkrow is already in the box, because that one
-   is 567 CP. Transfer the small one afterward.
+   Roselia is the only ready one worth a stone. Lickilicky is #46 and does
+   nothing in a raid, so don't spend one there just because you can.
+
+   **Piloswine is the best target on the board** and it's closest to ready.
+   Catch Swinub. Buddy walking won't get you there: Piloswine is 3 km per
+   candy, so 100 candy is a 300 km walk against the 1,701 km you've logged in
+   the life of the account. Catching pays 3 candy, 6 with a Pinap, and you
+   hold 39 Pinap.
 
 2. **Transfer 137 Pokemon.** `python rank.py box` names them. That frees 137
    slots and pays 137 candy plus stardust.
@@ -84,6 +95,7 @@ Gifts and stickers sit outside the bag and don't count toward the 550.
 | Level | 39 |
 | XP to level 40 | 193,417 |
 | Total XP | 3,759,583 |
+| **Stardust** | **36,934** |
 | Caught | 2,359 |
 | Walked | 1,701.2 km |
 | PokeStops | 1,155 |
@@ -92,12 +104,22 @@ Gifts and stickers sit outside the bag and don't count toward the 550.
 
 Your power-up ceiling is level 49. Reaching trainer level 40 raises it to 50.
 
+**Stardust is the binding constraint, not candy and not items.** 36,934 buys
+about six power-ups at level 30 and above. Taking one Pokemon from level 30 to
+40 costs 150,000. Evolving costs no dust at all, so evolve freely and power up
+almost nothing until the dust recovers.
+
 Level 40 also drops 137 items into the bag and grows the bag by 75. The full
 reward list is in [reference.md](reference.md#trainer-level-40).
 
 ## Roster
 
 311 Pokemon transcribed into `data/box_list.csv`. Run `python rank.py box`.
+
+**The CP column is unreliable.** A Sinnoh Stone picker screenshot covering 12
+of these species matched on 4 and disagreed on 8. Species names came through
+clean, so the keep and transfer calls hold, but any specific CP here needs
+checking against the game. Re-transcribe `capture/box/` before trusting a CP.
 
 Transferring never removes a Pokedex entry. A species stays registered once
 caught, so keeping one of every species is a collection preference. `box`

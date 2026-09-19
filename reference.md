@@ -98,6 +98,25 @@ A Pokemon at level 30 already has 87% of the CP multiplier it will ever have,
 and 93% at level 40. Spread the dust across more attackers before you push any
 one of them past 40.
 
+## Evolution costs
+
+An evolution needs the candy and, for some lines, an item. Holding the item
+alone isn't enough, and the game greys out anything you can't afford rather
+than saying why.
+
+| Variant | Candy | Game master field |
+|---|---|---|
+| Normal | base cost | `evolutionBranch.candyCost` |
+| Purified | 0.9x, where the branch defines it | `evolutionBranch.candyCostPurified` |
+| Shadow | 1.2x | `POKEMON_UPGRADE_SETTINGS.shadowCandyMultiplier` |
+
+Not every branch carries a purified price. Gligar, Murkrow and Piloswine drop
+from 100 to 90 when purified. Lickitung and Roselia don't.
+
+Evolving costs no stardust. Powering up costs no candy above level 40, only
+XL candy. So the two currencies buy different things, and running out of one
+doesn't block the other.
+
 ## Raid bosses
 
 These aren't in the game master. The client applies a flat multiplier and a
@@ -132,6 +151,7 @@ upgrades take no bag slot.
 | Shadow Shard | 4 refine into 1 Purified Gem, automatically | `ITEM_SHADOW_GEM_FRAGMENT.upgradeRequirementCount` |
 | Purified Gem | Subdues an enraged Shadow raid boss. Takes 8 across the group | GO Hub, below |
 | Star Piece | 1.5x stardust for 30 minutes | `ITEM_STAR_PIECE.stardustBoost` |
+| Evolution stones | Hold the stone AND the candy. Every Sinnoh Stone evolution is 100 candy | `evolutionBranch.candyCost` |
 | Rare Candy | Becomes one candy of whichever species you use it on | Niantic, below |
 | Elite Fast TM | Picks the fast move, including legacy moves | Niantic, below |
 | Charged TM | Rerolls the charged move at random | Niantic, below |
