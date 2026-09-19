@@ -8,33 +8,30 @@ Game mechanics: [reference.md](reference.md). Ranking engine: [rank.py](rank.py)
 
 ## Do this now
 
-1. **Spend one Sinnoh Stone on Roselia. Hold the other four.**
+1. **Hold all 5 Sinnoh Stones. You can't spend any of them yet.**
 
    The stones aren't the constraint, candy is. Every one of these costs 100
-   candy, 120 if it's shadow and 90 if it's purified. A greyed-out entry in
-   the stone picker means you're short of candy for that species, and the bar
-   under each name is how far along you are.
+   candy, 120 if it's shadow and 90 if it's purified. Every entry in your
+   stone picker is greyed out, which means no species is at 100.
 
-   | Evolve | CP | Becomes | Rank | Candy ready |
-   |---|---|---|---|---|
-   | Roselia (favorite) | 1553 | Roserade | **#4 Grass** | yes |
-   | Piloswine (shiny) | 1385 | Mamoswine | **#3 Ground** | partway |
-   | Murkrow | 1048 | Honchkrow | #7 Flying | no |
-   | Togetic | 955 | Togekiss | #7 Fairy | no |
-   | Electabuzz | 1310 | Electivire | #8 Electric | no |
-   | Gligar | 1046 / 371 | Gliscor | #19 Ground | one of them |
-   | Lickitung | 793 | Lickilicky | #46 Ghost | yes |
+   | Evolve | CP | Becomes | Rank |
+   |---|---|---|---|
+   | Piloswine (shiny) | 1385 | Mamoswine | **#3 Ground** |
+   | Roselia (favorite) | 1553 | Roserade | **#4 Grass** |
+   | Togetic | 955 | Togekiss | #7 Fairy |
+   | Electabuzz | 1310 | Electivire | #8 Electric |
+   | Gligar | 1046 / 371 | Gliscor | #19 Ground |
+   | Lickitung | 793 | Lickilicky | #46 Ghost |
 
-   Roselia is the only ready one worth a stone. Lickilicky is #46 and does
-   nothing in a raid, so don't spend one there just because you can.
+   Skip Murkrow and Misdreavus. You already own **Honchkrow 2163** and
+   **Mismagius 1884**, so both evolutions buy nothing.
 
-   **Piloswine is the best target on the board** and it's closest to ready.
-   Catch Swinub. Buddy walking won't get you there: Piloswine is 3 km per
-   candy, so 100 candy is a 300 km walk against the 1,701 km you've logged in
-   the life of the account. Catching pays 3 candy, 6 with a Pinap, and you
-   hold 39 Pinap.
+   **Piloswine is the best target on the board.** Catch Swinub. Buddy walking
+   won't get you there: 3 km per candy means 300 km for the hundred, against
+   the 1,701 km you've logged in the life of the account. Catching pays 3
+   candy, 6 with a Pinap, and you hold 39 Pinap.
 
-2. **Transfer 137 Pokemon.** `python rank.py box` names them. That frees 137
+2. **Transfer 130 Pokemon.** `python rank.py box` names them. That frees 137
    slots and pays 137 candy plus stardust.
 
 3. **Drop Poke Ball 236 to 50, and all 11 Hyper Potions.** Frees 197 and takes
@@ -114,12 +111,14 @@ reward list is in [reference.md](reference.md#trainer-level-40).
 
 ## Roster
 
-311 Pokemon transcribed into `data/box_list.csv`. Run `python rank.py box`.
+**Storage is 326 / 325. You're over the cap, which blocks catching.**
 
-**The CP column is unreliable.** A Sinnoh Stone picker screenshot covering 12
-of these species matched on 4 and disagreed on 8. Species names came through
-clean, so the keep and transfer calls hold, but any specific CP here needs
-checking against the game. Re-transcribe `capture/box/` before trusting a CP.
+`data/box_list.csv` holds 325 of those 326, transcribed by hand from
+overlapping screenshots. Every row has a CP, none is below the game minimum
+of 10, and every species resolves against the game master. A Sinnoh Stone
+picker screenshot covering 12 species agrees on all 12.
+
+Run `python rank.py box`.
 
 Transferring never removes a Pokedex entry. A species stays registered once
 caught, so keeping one of every species is a collection preference. `box`

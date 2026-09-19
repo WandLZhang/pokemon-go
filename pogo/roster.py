@@ -14,8 +14,12 @@ from . import battle
 FLAGS = ("shiny", "lucky", "shadow", "purified", "favorite")
 
 # The game refuses to transfer a favorite, so these need unfavoriting first.
-# Shiny and lucky only block the bulk transfer, one at a time still works.
 LOCKED_FLAGS = ("favorite",)
+
+# Never put these in the transfer pile on raid value alone. A shadow gets a
+# 1.2x attack multiplier, so it beats its own normal form outright. A shiny
+# and a lucky can't be replaced by catching another one.
+PRECIOUS_FLAGS = ("shiny", "lucky", "shadow", "purified")
 
 # Transferring never touches the Pokedex. A species stays registered once
 # caught, so keeping one of each is a collection choice, not a requirement.
@@ -51,6 +55,11 @@ class Holding:
     verdict: str = ""
     reason: str = ""
     copy_index: int = 0
+
+    @property
+    def precious(self):
+        """Irreplaceable, or strictly better than its normal form."""
+        return bool(self.flags & set(PRECIOUS_FLAGS))
 
     @property
     def locked(self):
@@ -203,6 +212,9 @@ def evaluate(gm, holdings, keep_rank=30, keep_one_of_each=False):
         elif h.locked:
             h.verdict = "LOCKED"
             h.reason = "favorite, unfavorite it first"
+        elif h.precious:
+            h.verdict = "HOLD"
+            h.reason = ", ".join(sorted(h.flags))
         elif id(h) in collection:
             h.verdict = "COLLECTION"
             h.reason = "only copy"

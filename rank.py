@@ -247,8 +247,8 @@ def cmd_box(gm, args):
     holdings = roster.evaluate(gm, roster.load_list(gm, args.list),
                                keep_rank=args.keep_rank,
                                keep_one_of_each=args.collection)
-    order = {"KEEP": 0, "EVOLVE": 1, "LOCKED": 2, "COLLECTION": 3,
-             "TRANSFER": 4, "RECHECK": 5}
+    order = {"KEEP": 0, "EVOLVE": 1, "HOLD": 2, "LOCKED": 3, "COLLECTION": 4,
+             "TRANSFER": 5, "RECHECK": 6}
     counts = {}
     for h in holdings:
         counts[h.verdict] = counts.get(h.verdict, 0) + 1
