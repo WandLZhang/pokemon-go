@@ -1,8 +1,8 @@
 # Pokemon GO mechanics
 
 Every number here comes from the game master unless the row names another
-source. `python rank.py constants` prints the live values, and `python rank.py
-selftest` checks 39 of them against published anchors.
+source. `./fetch.sh` pulls the current copy into `data/`, and the templates
+named in the Source column are where each value lives.
 
 ## Rules that break main-series advice
 
@@ -92,7 +92,7 @@ which is the energy term.
 
 The cost arrays index by whole level. Each level charges that cost twice,
 once per half-level step. Level 40 to 41 pays `stardustCost[39]` twice. A wrong index still
-produces plausible totals, so `selftest` pins all four rows.
+produces plausible totals, so check a recomputation against all four rows.
 
 A Pokemon at level 30 already has 87% of the CP multiplier it will ever have,
 and 93% at level 40. Spread the dust across more attackers before you push any

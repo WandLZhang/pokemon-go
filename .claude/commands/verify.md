@@ -5,8 +5,13 @@ description: Audit this repo's facts and constants with read-only agents, then f
 Audit this repo for factual errors, then fix everything the audit finds.
 
 Dispatch the agents below in parallel. Every one is **read-only** and reports
-findings only. When they all return, you apply the fixes yourself and re-run
-`python rank.py selftest`. Reporting without fixing isn't finishing.
+findings only. When they all return, you apply the fixes yourself. Reporting
+without fixing isn't finishing.
+
+There's no code here on purpose. Verify numbers by querying
+`data/gamemaster.json` directly in a throwaway script, never by building a
+tool. The engine that used to live here took seven correction commits in
+twenty-six, which is why it's gone.
 
 ## Output contract, every agent
 
@@ -41,14 +46,11 @@ Name these in every agent prompt. They produce nearly every error here.
 
 ## Agents
 
-**A. Constants against the game master.** Scope: the Constants table and the
-Formulas block in `reference.md`, plus `pogo/battle.py` and
-`pogo/gamemaster.py`. Run `python rank.py constants` and check every printed
-value against `data/gamemaster.json` directly. Confirm the type chart index
-order in `POKEMON_TYPES` by spot-checking matchups no selftest covers.
-Confirm the power-up cost arrays are indexed by whole level and charged twice
-per level, and that the published anchors in `selftest` are the real published
-figures rather than numbers reverse-engineered from this code.
+**A. Constants against the game master.** Scope: the Constants table, the
+Formulas block and the Power-up costs table in `reference.md`. Check every
+value against `data/gamemaster.json` directly. The power-up arrays index by
+whole level and charge twice per level, so confirm the four totals. Confirm
+the type multipliers against `POKEMON_TYPE_*.attackScalar`.
 
 **B. Off-game-master claims.** Scope: the Raid bosses table, the Items table,
 and the "Rules that break main-series advice" list in `reference.md`. None of
@@ -62,11 +64,10 @@ figure follows, and that the counted bag items, the gift exclusion and the
 unaccounted remainder all reconcile against 571 / 550. Check the level 40
 reward list and the power-up ceiling claim against a live source.
 
-**D. Ranking math.** Scope: `pogo/battle.py` only. Check the damage formula,
-the cycle DPS derivation, the TDO model and the boss construction against
-published GO damage mechanics. Flag anywhere the code silently returns 0.0 or
-None and the caller treats that as a real result. Say whether the DPS a
-`counters` run reports for a well-known attacker matches published figures.
+**D. Ranking math.** Scope: the DPS, CP and coverage figures quoted in
+`README.md`. Recompute each from `data/gamemaster.json` and say which ones
+move. The formulas are in `reference.md`. Compare the resulting DPS for a
+well-known attacker against published lists and report the gap.
 
 **E. Writing.** Scope: `README.md` and `reference.md`. Judge against the
 owner's rules: always contract; ASD-STE100 one idea per sentence, active,
@@ -77,43 +78,36 @@ line, the current text, and a concrete rewrite.
 
 ## Already fixed, don't re-report unless it regressed
 
+These are fact errors in the docs. Code-bug entries were dropped with the
+code.
+
 - Power-up ceiling stated as trainer level + 2. It's + 10, since GO Beyond.
 - The level 40 scroll reward called a Charged TM. It's an Elite Fast TM.
 - Gifts counted against the item bag. They have their own storage.
-- Duplicate `_NORMAL` forms listed twice in `counters` output.
-- Power-up costs indexed per half-step instead of per whole level.
 - Candy for level 1 to 40 given as 248. The current game master says 304.
 - Level 40 payout given as 136 items. It's 137.
 - Level 30 to 50 given as 250,000 dust. It's 400,000.
 - Trainer level cap cited to `defaultLevelCap`, which reads 70. The cap is 80.
-- `hit_points` missing the floor of 10, which zeroed Shedinja.
-- `cycle_dps` rounding the fast-move count up. Energy carries over in raids.
-- The boss taking no `enemyAttackInterval`, which cut TDO by 2 to 3 times.
-- The boss solving for its best moveset per attacker instead of averaging.
-- `_fmt_move` crashing on the nine integer move ids in the game master.
-- `cpm` and `powerup_cost` accepting levels off the 0.5 grid.
-- A boss with no moveset reported as "nothing could attack this boss".
+- Ghost and Poison coverage given as 97%. They're 87% and 91%.
 - Citing `gamepress.gg/pokemongo` and the 2019 GO Hub damage-mechanics page,
   which still prints the superseded 1.4x multipliers.
-- `evaluate` grouping copies by the current species while the rank came from
-  the final form, which told you to evolve a Charmander into a Charizard you
-  already own.
-- `evolved_cp` sampling only the uniform IV corners and ignoring that the
-  displayed CP is floored.
-- `type_leaderboard` discarding its per-type table, so the caller rebuilt the
-  denominator wrong for Ghost and Poison.
-- `plan` ignoring `--collection`, `_boss` taking `matches[0]` from a substring
-  fallback, `roster --level` leaving the denominator at 40.
-- `Holding` being a value-equal dataclass, which made `copies.index()` right
-  only by accident.
-- `fetch.sh` using GNU `stat -c` and `sha256sum`, which both fail on macOS.
+- Advice to evolve a Charmander into a Charizard already in the box, and to
+  transfer the Salamence already fighting. Check every evolve row against
+  what the box already holds.
 
 ## Known and accepted, don't report as bugs
 
-- No energy from damage taken. Costs 1 to 6% of DPS, declared in
-  `reference.md` and in the `battle.py` docstring.
-- No weather, friendship, Party Power, Mega bonus or dodging.
-- `counters` without `--box` lists forms you can't obtain, such as
-  Eternamax Eternatus and Zen Darmanitan. `--box` avoids it.
-- `type_leaderboard` requires both moves to share a type. That excludes the
-  true best attacker in 7 of 18 types, and the output says so.
+- The DPS model gives neither side energy from damage taken, which costs 1 to
+  6%, and applies no weather, friendship, Party Power, Mega bonus or dodging.
+  `reference.md` declares both.
+- Coverage scores each type against the best **same-type** attacker. That
+  excludes the true strongest in 7 of 18 types, and `README.md` says so.
+- `data/bag.json` marks two lines `derived` rather than observed.
+
+## Sequence check
+
+Read the "Do this next" steps as one argument before finishing. An early step
+must not destroy an input a later step needs, and a step must not be listed
+as actionable when the state says it's blocked. Both have happened here: a
+transfer list and an evolve list naming the same Charmander, and an evolve
+step ranked first while nothing in it was affordable.
