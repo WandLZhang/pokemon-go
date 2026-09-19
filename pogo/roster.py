@@ -179,7 +179,8 @@ def type_leaderboard(gm, level=40.0, same_type_only=True):
     return ranks
 
 
-def evaluate(gm, holdings, keep_rank=30, keep_one_of_each=False):
+def evaluate(gm, holdings, keep_rank=30, keep_one_of_each=False,
+             respect_favorites=True):
     """Score every holding, then call it.
 
     keep_rank is how deep a species has to place in its best type to earn a
@@ -232,7 +233,7 @@ def evaluate(gm, holdings, keep_rank=30, keep_one_of_each=False):
         elif ranked and h.copy_index == 0:
             h.verdict = "KEEP"
             h.reason = f"#{h.type_rank} {h.move_type}, {h.dps:.1f} DPS"
-        elif h.locked:
+        elif h.locked and respect_favorites:
             h.verdict = "LOCKED"
             h.reason = "favorite, unfavorite it first"
         elif h.precious:
@@ -243,6 +244,8 @@ def evaluate(gm, holdings, keep_rank=30, keep_one_of_each=False):
             h.reason = "only copy"
         else:
             spare = " spare copy" if h.copy_index else ""
+            if h.locked:
+                spare += ", unfavorite first"
             h.verdict = "TRANSFER"
             h.reason = (f"no raid value{spare}" if not ranked
                         else f"{h.copy_index + 1}th best copy")

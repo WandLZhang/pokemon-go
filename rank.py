@@ -246,7 +246,8 @@ def cmd_box(gm, args):
     """Keep or transfer, for every Pokemon in the transcribed box list."""
     holdings = roster.evaluate(gm, roster.load_list(gm, args.list),
                                keep_rank=args.keep_rank,
-                               keep_one_of_each=args.collection)
+                               keep_one_of_each=args.collection,
+                               respect_favorites=not args.unfavorite)
     order = {"KEEP": 0, "EVOLVE": 1, "HOLD": 2, "LOCKED": 3, "COLLECTION": 4,
              "TRANSFER": 5, "RECHECK": 6}
     counts = {}
@@ -337,6 +338,8 @@ def main(argv=None):
     boxcmd.add_argument("--keep-rank", type=int, default=30,
                         help="how deep in its type a species must place")
     boxcmd.add_argument("--top", type=int, default=40)
+    boxcmd.add_argument("--unfavorite", action="store_true",
+                        help="treat favorites as transferable")
     boxcmd.add_argument("--collection", action="store_true",
                         help="keep one of every species. Off by default, since\ntransferring never costs the Pokedex entry")
 
