@@ -1,42 +1,111 @@
 {
-  "observed": "2026-09-18, from screenshots",
+  "observed": "2026-09-19, derived",
   "complete": true,
   "capacity": 550,
-  "reported_total": 571,
-  "counted_here": 571,
-  "note": "Full item bag transcribed from scroll capture. Gifts, stickers, and key items sit outside the bag and do not count toward bag capacity.",
+  "reported_total": 374,
+  "counted_here": 374,
+  "note": "Poke Ball dropped 236 to 50 and all 11 Hyper Potions dropped. Those two lines are derived from the action taken, not from a fresh screenshot, and PokeStops have been paying again since. Re-scroll the bag to resync.",
   "items": {
-    "Poke Ball": {"count": 236},
-    "Ultra Ball": {"count": 82},
-    "Max Potion": {"count": 52},
-    "Great Ball": {"count": 41},
-    "Pinap Berry": {"count": 39},
-    "Razz Berry": {"count": 38},
-    "Premium Battle Pass": {"count": 14},
-    "Nanab Berry": {"count": 13},
-    "Hyper Potion": {"count": 11},
-    "Rare Candy": {"count": 6, "item_id": "ITEM_RARE_CANDY"},
-    "Lure Module": {"count": 5},
-    "Sinnoh Stone": {"count": 5, "item_id": "ITEM_GEN4_EVOLUTION_STONE"},
-    "Incense": {"count": 3},
-    "Metal Coat": {"count": 3, "item_id": "ITEM_METAL_COAT"},
-    "Unova Stone": {"count": 3, "item_id": "ITEM_GEN5_EVOLUTION_STONE"},
-    "Shadow Shard": {"count": 3, "item_id": "ITEM_SHADOW_GEM_FRAGMENT"},
-    "Charged TM": {"count": 2, "item_id": "ITEM_MOVE_REROLL_SPECIAL_ATTACK"},
-    "Sun Stone": {"count": 2, "item_id": "ITEM_SUN_STONE"},
-    "Revive": {"count": 1},
-    "Daily Adventure Incense": {"count": 1},
-    "Star Piece": {"count": 1, "item_id": "ITEM_STAR_PIECE"},
-    "Rocket Radar": {"count": 1},
-    "Super Rocket Radar": {"count": 1},
-    "Poffin": {"count": 1},
-    "Egg Incubator": {"count": 1},
-    "Raid Pass": {"count": 1},
-    "Glacial Lure Module": {"count": 1},
-    "Mossy Lure Module": {"count": 1},
-    "Magnetic Lure Module": {"count": 1},
-    "Dragon Scale": {"count": 1, "item_id": "ITEM_DRAGON_SCALE"},
-    "Upgrade": {"count": 1, "item_id": "ITEM_UP_GRADE"}
+    "Poke Ball": {
+      "count": 50
+    },
+    "Ultra Ball": {
+      "count": 82
+    },
+    "Max Potion": {
+      "count": 52
+    },
+    "Great Ball": {
+      "count": 41
+    },
+    "Pinap Berry": {
+      "count": 39
+    },
+    "Razz Berry": {
+      "count": 38
+    },
+    "Premium Battle Pass": {
+      "count": 14
+    },
+    "Nanab Berry": {
+      "count": 13
+    },
+    "Rare Candy": {
+      "count": 6,
+      "item_id": "ITEM_RARE_CANDY"
+    },
+    "Lure Module": {
+      "count": 5
+    },
+    "Sinnoh Stone": {
+      "count": 5,
+      "item_id": "ITEM_GEN4_EVOLUTION_STONE"
+    },
+    "Incense": {
+      "count": 3
+    },
+    "Metal Coat": {
+      "count": 3,
+      "item_id": "ITEM_METAL_COAT"
+    },
+    "Unova Stone": {
+      "count": 3,
+      "item_id": "ITEM_GEN5_EVOLUTION_STONE"
+    },
+    "Shadow Shard": {
+      "count": 3,
+      "item_id": "ITEM_SHADOW_GEM_FRAGMENT"
+    },
+    "Charged TM": {
+      "count": 2,
+      "item_id": "ITEM_MOVE_REROLL_SPECIAL_ATTACK"
+    },
+    "Sun Stone": {
+      "count": 2,
+      "item_id": "ITEM_SUN_STONE"
+    },
+    "Revive": {
+      "count": 1
+    },
+    "Daily Adventure Incense": {
+      "count": 1
+    },
+    "Star Piece": {
+      "count": 1,
+      "item_id": "ITEM_STAR_PIECE"
+    },
+    "Rocket Radar": {
+      "count": 1
+    },
+    "Super Rocket Radar": {
+      "count": 1
+    },
+    "Poffin": {
+      "count": 1
+    },
+    "Egg Incubator": {
+      "count": 1
+    },
+    "Raid Pass": {
+      "count": 1
+    },
+    "Glacial Lure Module": {
+      "count": 1
+    },
+    "Mossy Lure Module": {
+      "count": 1
+    },
+    "Magnetic Lure Module": {
+      "count": 1
+    },
+    "Dragon Scale": {
+      "count": 1,
+      "item_id": "ITEM_DRAGON_SCALE"
+    },
+    "Upgrade": {
+      "count": 1,
+      "item_id": "ITEM_UP_GRADE"
+    }
   },
   "outside_the_bag": {
     "Gift": 10,

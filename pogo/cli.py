@@ -391,6 +391,47 @@ def cmd_roster(gm, args):
     return 0
 
 
+def cmd_state(gm, args):
+    """Where the account stands, read from the data files.
+
+    The README used to hardcode these and went stale every time something
+    was transferred or dropped. This reads them instead.
+    """
+    trainer = json.loads(Path(args.trainer).read_text())
+    bag = json.loads(Path(args.bag).read_text())
+    holdings = roster.load_list(gm, args.list)
+
+    level = trainer["level"]
+    to_next = gm.required_xp[level] - trainer["total_xp"]
+    bag_total = sum(v["count"] for v in bag["items"].values())
+    ceiling = min(level + gm.levels_above_player, gm.max_pokemon_level)
+
+    print(f"{trainer['name']}, level {level}, buddy {trainer['buddy']}")
+    print(f"  XP to {level + 1}      {to_next:,}")
+    print(f"  stardust        {trainer['stardust']:,}")
+    print(f"  box             {len(holdings)} of {trainer['pokemon_storage']}"
+          f"{'   OVER CAP' if len(holdings) > trainer['pokemon_storage'] else ''}")
+    print(f"  bag             {bag_total} of {bag['capacity']}"
+          f"{'   OVER CAP' if bag_total > bag['capacity'] else ''}")
+    print(f"  power-up ceiling level {ceiling:g}")
+
+    # A power-up is priced off the Pokemon's level, not the trainer's, so
+    # quote the range rather than one misleading number.
+    dust = trainer["stardust"]
+    cheap = gm.stardust_cost[29]
+    dear = gm.stardust_cost[39]
+    print(f"\n  {dust:,} stardust is {dust // cheap} power-ups on a level 30 "
+          f"Pokemon at {cheap:,} each, or {dust // dear} on a level 40 at "
+          f"{dear:,}.")
+    print(f"  Taking one Pokemon from level 30 to 40 costs "
+          f"{battle.powerup_cost(gm, 30, 40)['stardust']:,}.")
+
+    stale = {k: v.get("observed") for k, v in
+             (("trainer", trainer), ("bag", bag)) if v.get("observed")}
+    print("\n  observed: " + ", ".join(f"{k} {v}" for k, v in stale.items()))
+    return 0
+
+
 def cmd_powerup(gm, args):
     try:
         cost = battle.powerup_cost(gm, args.start, args.end)
@@ -461,6 +502,11 @@ def main(argv=None):
     rost.add_argument("--gap", type=float, default=70.0,
                       help="flag types under this %% of the game best")
 
+    state = sub.add_parser("state", help="where the account stands")
+    state.add_argument("--list", default="data/box_list.csv")
+    state.add_argument("--bag", default="data/bag.json")
+    state.add_argument("--trainer", default="data/trainer.json")
+
     powerup = sub.add_parser("powerup", help="stardust and candy for a climb")
     powerup.add_argument("--from", dest="start", type=float, required=True)
     powerup.add_argument("--to", dest="end", type=float, required=True)
@@ -478,5 +524,6 @@ def main(argv=None):
         "box": cmd_box,
         "plan": cmd_plan,
         "roster": cmd_roster,
+        "state": cmd_state,
         "powerup": cmd_powerup,
     }[args.command](gm, args)

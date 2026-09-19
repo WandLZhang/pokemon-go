@@ -4,15 +4,25 @@ Roster and bag for WillisZhang. Raids first, GO Battle League second.
 
 Season: Twilight Trails, Sept 8 to Dec 1 2026. GO Battle League Season 28.
 
+## Done
+
+- Transferred 145. Box 326 to 181, and catching is unblocked.
+- Dropped Poke Ball 236 to 50 and all 11 Hyper Potions. Bag 571 to 374, and
+  PokeStops pay again.
+
 ## Do this next
 
-**1. Clear the bag.** It reads 571 of 550, so PokeStops are giving you nothing.
+**1. Transfer 11 more.** A grouping bug hid these: the tool ranked duplicate
+copies by the species you hold rather than the one it becomes, so a Charmander
+and the Charizard 1673 both looked like the only copy. Run `python rank.py
+plan --markdown`, or paste this one line:
 
-- Poke Ball 236 down to 50. You hold 82 Ultra and 41 Great; at level 39 the
-  Poke Balls do nothing.
-- All 11 Hyper Potions. Max Potion does the same job and you hold 52.
+```
+charmander,grotle,jigglypuff,kirlia,machoke,magmar,monferno,petilil,piplup,seedot,togepi
+```
 
-That's 571 to 374, and item income restarts.
+Each is a worse route to something you already hold or already plan to evolve.
+Box 181 to 170.
 
 **2. Evolve the five the game offers.** Search `evolve` in your Pokemon list.
 
@@ -56,18 +66,22 @@ Fighting for Persian, Psychic for Machamp, Rhyperior for Reshiram.
 
 ## Where you are
 
-| | |
-|---|---|
-| Trainer level | 39, 193,417 XP short of 40 |
-| Stardust | 36,934 |
-| Box | 181 of 325, after transferring 145 |
-| Bag | 571 of 550, over cap |
-| Buddy | Pancham |
+Run `python rank.py state`. It reads `data/trainer.json`, `data/bag.json` and
+`data/box_list.csv`, so it can't go stale the way a table here does.
 
-**Stardust is the binding constraint.** 36,934 buys about six power-ups at
-level 30 and above, and one Pokemon from level 30 to 40 costs 150,000.
-Evolving costs no dust, so evolve freely and power up almost nothing until
-raids refill it.
+```
+WillisZhang, level 39, buddy Pancham
+  XP to 40        193,417
+  stardust         36,934
+  box                 181 of 325
+  bag                 374 of 550
+  power-up ceiling level 49
+```
+
+**Stardust is the binding constraint.** 36,934 is 7 power-ups on a level 30
+Pokemon and 3 on a level 40 one. Taking one Pokemon from level 30 to 40 costs
+150,000. Evolving costs no dust, so evolve freely and power up almost nothing
+until raids refill it.
 
 ### Type coverage
 
@@ -121,6 +135,7 @@ python rank.py selftest     # 39 checks against published values
 | `evolve` | What each evolution item in the bag can buy |
 | `counters BOSS --box` | Rank your box against a raid boss |
 | `powerup --from --to` | Stardust and candy for a climb |
+| `state` | Where the account stands, read from `data/` |
 | `constants` | Every constant the ranking uses |
 
 `plan --markdown` prints one fenced block per search line. A multi-line block
@@ -133,6 +148,7 @@ first newline.
 |---|---|
 | `data/box_list.csv` | The box. `species,cp,shiny,lucky,shadow,purified,favorite,tag` |
 | `data/bag.json` | Item counts, reconciled to the in-game total |
+| `data/trainer.json` | Level, XP, stardust, storage caps |
 | `data/gamemaster.stamp` | Date and SHA of the game master in use |
 | `pogo/gamemaster.py` | Loads and indexes the PokeMiners dump |
 | `pogo/battle.py` | CPM, CP, damage, cycle DPS, TDO, power-up costs |
@@ -149,7 +165,12 @@ screenshot, or a cited source.
 from overlapping screenshots. An independent Sinnoh Stone picker screenshot
 agreed on all 12 species it covered. 145 rows left in the transfer pass.
 
-It carries no IVs, no candy counts, no legacy moves, no costumes and no size.
+`data/bag.json` reads 374 of 550. The Poke Ball and Hyper Potion lines are
+derived from the drop rather than a fresh screenshot, and stops have been
+paying since, so re-scroll the bag when you want it exact.
+
+`data/box_list.csv` carries no IVs, no candy counts, no legacy moves, no
+costumes and no size.
 List-view screenshots don't show those. For raids that's fine: a perfect IV
 spread is worth 3 to 5% DPS while one level band is worth more. Before any
 mass transfer, search `@special`, `costume` and `xxl` in game and favorite
