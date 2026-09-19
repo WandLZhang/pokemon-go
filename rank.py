@@ -318,6 +318,13 @@ def cmd_plan(gm, args):
     total = sum(len(v) for v in going.values())
 
     print(f"TRANSFER {total}. Storage {args.storage} -> {args.storage - total}.\n")
+    print("0. Before any of this, run these three searches and favorite what")
+    print("   they return. The box list carries none of these flags, so the")
+    print("   plan below can't see them.\n")
+    print("   @special   legacy or event-exclusive moves, no Elite TM restores them")
+    print("   costume    event Pokemon, not re-catchable and blocked from HOME")
+    print("   xxl        worth +178 in a Showcase, which pays stardust\n")
+    print("   The mass-transfer prompt will offer to INCLUDE these. Leave them out.\n")
 
     if unfavorite:
         print(f"1. Unfavorite these {len(unfavorite)} first. The game won't "

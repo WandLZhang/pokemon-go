@@ -31,8 +31,14 @@ Game mechanics: [reference.md](reference.md). Ranking engine: [rank.py](rank.py)
    the 1,701 km you've logged in the life of the account. Catching pays 3
    candy, 6 with a Pinap, and you hold 39 Pinap.
 
-2. **Transfer 130 Pokemon.** `python rank.py box` names them. That frees 130
-   slots, pays 130 candy plus stardust, and takes storage from 326 to 196.
+2. **Transfer 148 Pokemon.** `python rank.py plan` gives them as paste-able
+   search strings. Storage goes 326 to 178.
+
+   First run `@special`, `costume` and `xxl` in the search bar and favorite
+   whatever they return. The box list carries none of those flags, so the
+   plan can't see them. A legacy move can't be restored by any Elite TM, a
+   costume can't be re-caught, and an XXL is worth 178 bonus points in a
+   Showcase. When the transfer prompt offers to INCLUDE them, leave them out.
 
 3. **Drop Poke Ball 236 to 50, and all 11 Hyper Potions.** Frees 197 and takes
    the bag to 374 of 550. You hold 82 Ultra Balls and 41 Great Balls, so the
